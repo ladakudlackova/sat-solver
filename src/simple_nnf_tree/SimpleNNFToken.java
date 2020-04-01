@@ -7,7 +7,10 @@ public abstract class SimpleNNFToken extends FormulaToken {
 	public SimpleNNFToken(String operator) {
 		token=operator;
 	}
-	
+
+	public SimpleNNFToken() {
+	}
+
 	@Override
 	public String getToken() {
 		return token.toString();

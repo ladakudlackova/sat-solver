@@ -11,7 +11,6 @@ import java.util.Map;
 import simple_nnf_tree.SimpleNNFOperatorToken.operators;
 import tseitin.Definition;
 
-// TODO: git + inp/out + pamet-stream
 
 public class DerivationTree {
 
@@ -25,78 +24,67 @@ public class DerivationTree {
 		build(r);
 	}
 	
-	private void build(String nnf) {
-		root = new DerivationNode(null);
-		DerivationNode current = root;
-		String[] tokens = nnf.split("\\s");
-		int i=0;
-		while (i<tokens.length && validNNF) {
-			current=processToken(tokens[i], current);
-			i++;
-		}
-	}
-	
 	private void build(Reader r) {
-		root = new DerivationNode(null);
-		DerivationNode current = root;
-		List<Object> tokens;
+		List<Object> tokens=null;
 		try {
 			tokens = Tokenizer.getTokens(r);
-			int i=0;
-			while (i<tokens.size() && validNNF) {
-				current=processToken(tokens.get(i).toString(), current);
-				i++;
-			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+			validNNF = false;
+			return;
+		}		
+		processTokens(tokens);
 	}
 	
-	private DerivationNode processToken(String token, DerivationNode current){
-		if (operators.LEFT_PAR.equalsToken(token)) {
-			current.leftChild=new DerivationNode(current);
-			return current.getLeftChild();
+	private void processTokens(List<Object> tokens){
+		List<DerivationNode> stack = new ArrayList<DerivationNode>();
+		int i=tokens.size();
+		while (i>0 && validNNF) {
+			i--;
+			processToken(tokens.get(i).toString(), stack);
 		}
-		if (operators.RIGHT_PAR.equalsToken(token)) {
-			return current.parent;
-		}
-		if (operators.NOT.equalsToken(token)) {
-			current.token=operators.NOT.value;
-			current.leftChild=new DerivationNode(current);
-			return current.getLeftChild();
-		}
-		if (operators.AND.equalsToken(token)) {
-			current.token=operators.AND.value;
-			current.rightChild=new DerivationNode(current);
-			return current.getRightChild();
-		}
-		if (operators.OR.equalsToken(token)) {
-			current.token=operators.OR.value;
-			current.rightChild=new DerivationNode(current);
-			return current.getRightChild();
-		}
-		if (token.matches("^[A-Za-z][A-Za-z0-9]*"))
-			return processVariableToken(token, current);
-		validNNF=false;
-		return null;
+		root=stack.get(0);
 	}
 	
-	private DerivationNode processVariableToken(String token, DerivationNode current){
+	private void processToken(String token, List<DerivationNode> stack){
+		if (operators.equalsParenthesisToken(token))
+			return;
+		else if (operators.NOT.equalsToken(token)) {
+			DerivationNode current = new DerivationNode(operators.NOT.value);
+			current.leftChild=stack.remove(0);
+			stack.add(0,current);
+		}
+		else if (operators.AND.equalsToken(token)) {
+			DerivationNode current = new DerivationNode(operators.AND.value);
+			current.leftChild=stack.remove(0);
+			current.rightChild=stack.remove(0);
+			stack.add(0,current);
+		}
+		else if (operators.OR.equalsToken(token)) {
+			DerivationNode current = new DerivationNode(operators.OR.value);
+			current.leftChild=stack.remove(0);
+			current.rightChild=stack.remove(0);
+			stack.add(0,current);
+		}
+		else if (token.matches("^[A-Za-z][A-Za-z0-9]*"))
+			processVariableToken(token, stack);
+		else
+			validNNF=false;
+	}
+	
+	private void processVariableToken(String token, List<DerivationNode> stack){
+		SimpleNNFVariableToken varToken;
 		if (variables.containsKey(token))
-			current.token=variables.get(token);
+			varToken=variables.get(token);
 		else {
-			SimpleNNFVariableToken varToken = new SimpleNNFVariableToken(token);
-			current.token=varToken;
+			varToken = new SimpleNNFVariableToken(token);
 			variables.put(token, varToken);
 		}
-		return current.parent;
+		stack.add(0,new DerivationNode(varToken));
 	}
 	
 	public void traverse(Definition def) {
 		List<DerivationNode> q = new ArrayList<DerivationNode>();
-		q.add(root.leftChild);
+		q.add(root);
 		DerivationNode current;
 		while (!q.isEmpty()) {
 			current=q.remove(0);
@@ -119,8 +107,7 @@ public class DerivationTree {
 	
 	public Collection<SimpleNNFVariableToken> getNNFVariables(){
 		
-		return
-				variables.values();
+		return variables.values();
 	}	
 }
 

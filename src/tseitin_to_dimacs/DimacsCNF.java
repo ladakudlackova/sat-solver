@@ -1,5 +1,6 @@
 package tseitin_to_dimacs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import simple_nnf_tree.SimpleNNFVariableToken;
@@ -52,16 +53,19 @@ public class DimacsCNF {
 	}
 
 	private static void appendClauses(StringBuilder sb, Collection<Assignment[]> clauses) {
-		for (Assignment[] clause: clauses) {
-			{
-				for (Assignment a:clause) {
-					sb.append(a.toString());
-					sb.append(" ");
-				}
-				sb.append("0");
-				sb.append(NL);
-			}
-			
+		ArrayList<Assignment[]> clausesFromRoot = new ArrayList<Assignment[]>(clauses);
+		Assignment[] rootClause = clausesFromRoot.remove(clausesFromRoot.size()-1);
+		clausesFromRoot.add(0,rootClause);
+		for (Assignment[] clause: clausesFromRoot) 
+			appendClause(sb, clause);
+	}
+	
+	private static void appendClause(StringBuilder sb, Assignment[] clause) {
+		for (Assignment a:clause) {
+			sb.append(a.toString());
+			sb.append(" ");
 		}
+		sb.append("0");
+		sb.append(NL);
 	}
 }

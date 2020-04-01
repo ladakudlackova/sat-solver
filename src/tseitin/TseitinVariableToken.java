@@ -9,8 +9,8 @@ public class TseitinVariableToken extends FormulaToken {
 	private boolean value = true;
 	
 	public TseitinVariableToken() {
-		count++;
-		token=count;
+		count = getCount() + 1;
+		token=getCount();
 	}
 
 	@Override
@@ -22,5 +22,9 @@ public class TseitinVariableToken extends FormulaToken {
 	
 	protected static void reset() {
 		count=0;
+	}
+
+	public static int getCount() {
+		return count;
 	}
 }

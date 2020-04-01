@@ -1,13 +1,9 @@
 package tseitin_to_dimacs;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.StringReader;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import simple_nnf_tree.DerivationTree;

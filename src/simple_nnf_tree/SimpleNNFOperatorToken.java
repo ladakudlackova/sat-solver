@@ -21,10 +21,17 @@ public class SimpleNNFOperatorToken extends SimpleNNFToken {
 	    public boolean equalsToken(String token) {
 	    	return value.getToken().equals(token);
 	    }
+	    
+	    public static boolean equalsParenthesisToken(String token) {
+	    	return (LEFT_PAR.equalsToken(token)|RIGHT_PAR.equalsToken(token));
+	    }
 	}
 	
 	public SimpleNNFOperatorToken(String operator) {
 		super(operator);
+	}
+
+	public SimpleNNFOperatorToken() {
 	}
 
 	@Override

@@ -8,24 +8,23 @@ import simple_nnf_tree.SimpleNNFVariableToken;
 
 public class Encoding {
 
-	DerivationTree tree;
 	ArrayList<TseitinVariableToken> variables = new ArrayList<TseitinVariableToken>();
 	CNFDefinition cnfDef;
 	
 	public void encode(DerivationTree tree) {
-		this.tree=tree;
-		initVariables();
+		initVariables(tree);
 		cnfDef = new CNFDefinition();
 		tree.traverse(cnfDef);
+		cnfDef.addRootClause(tree.getRoot());
 	}
 	
-	private void initVariables() {
+	private void initVariables(DerivationTree tree) {
 		TseitinVariableToken.reset();
-		addNNFVariables();
+		addNNFVariables(tree);
 		tree.traverse(new VaribleNameDefinition());	
 	}
 	
-	private void addNNFVariables() {
+	private void addNNFVariables(DerivationTree tree) {
 		for (SimpleNNFVariableToken nnfVar : tree.getNNFVariables()) {
 			TseitinVariableToken tseitinVar = new TseitinVariableToken();
 			variables.add(tseitinVar);
@@ -34,10 +33,10 @@ public class Encoding {
 	}
 
 	public Collection<Assignment[]> getClauses() {
-		return cnfDef.clauses;
+		return cnfDef.getClauses();
 	}
 	
 	public int getTseitinVarCount() {
-		return variables.size();
+		return TseitinVariableToken.getCount();
 	}
 }

@@ -3,12 +3,16 @@ package simple_nnf_tree;
 import tseitin.TseitinVariableToken;
 
 public class DerivationNode {
-	SimpleNNFToken token;
-	TseitinVariableToken tseitinVar;
-	DerivationNode leftChild, rightChild, parent;
+	protected SimpleNNFToken token;
+	protected TseitinVariableToken tseitinVar;
+	protected DerivationNode leftChild, rightChild, parent;
 	
 	DerivationNode(DerivationNode parent){
 		this.parent=parent;
+	}
+
+	public DerivationNode(SimpleNNFToken token) {
+		this.token=token;
 	}
 
 	public SimpleNNFToken getToken() {
