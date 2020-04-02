@@ -20,8 +20,6 @@ public class Tokenizer {
 	            tokens.add((char) currentToken);	 
 	        currentToken = streamTokenizer.nextToken();
 	    }
-	 for (Object o:tokens)
-		 System.out.println(o);
 	    return tokens;
 	}
 }

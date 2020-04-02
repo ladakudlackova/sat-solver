@@ -8,10 +8,11 @@ import tseitin.Assignment;
 
 public class DimacsCNF {
 	
+	private static final String NNF_VARIABLES = "Original NNF variables:\n";
+	private static final String ROOT_VARIABLE = "Root variable: ";
 	private static final String COMMENT = "c ";
 	private static final String HEADER 	= "p cnf ";
 	private static final String EQ 		= "~";
-	private static final String DEL 	= ", ";
 	private static final String NL 		= System.lineSeparator();
 	
 	private static final int COMMENTS_LINE = 5;
@@ -25,18 +26,29 @@ public class DimacsCNF {
 		return sb.toString();
 	}
 	
-	private static void appendComments(StringBuilder sb,Collection<SimpleNNFVariableToken> nnfVars) {
-				int count=0;
-																//c comments
-		for (SimpleNNFVariableToken nnfVar : nnfVars) {
-			if (count%COMMENTS_LINE==0)
+	private static void appendComments(StringBuilder sb,Collection<SimpleNNFVariableToken> nnfVars) {	
+		sb.append(COMMENT);
+		sb.append(ROOT_VARIABLE);
+		int rootVar = nnfVars.size()+1;
+		sb.append(rootVar);
+		sb.append(NL);
+		sb.append(COMMENT);
+		sb.append(NNF_VARIABLES);
+		appendNNFVars(sb, nnfVars);		
+	}
+	
+	private static void appendNNFVars(StringBuilder sb, Collection<SimpleNNFVariableToken> nnfVars) {   
+		int count=0;
+		for (SimpleNNFVariableToken nnfVar : nnfVars) {			//nnfVar~tVar
+			if (count%COMMENTS_LINE==0)							
 				sb.append(COMMENT);
-			sb.append(nnfVar.getToken());
+			sb.append(nnfVar.getToken());						
 			sb.append(EQ);
-			sb.append(nnfVar.getTseitinVar().getToken());
-			sb.append(DEL);	
+			sb.append(nnfVar.getTseitinVar().getToken());	
 			if (count%COMMENTS_LINE==COMMENTS_LINE-1)
 				sb.append(NL);
+			else 
+				sb.append("  ");
 			count++;
 		}
 		if (count%COMMENTS_LINE>0)

@@ -4,56 +4,51 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.nio.file.Paths;
 
 import simple_nnf_tree.DerivationTree;
+import tseitin.CNFDefinition.implicationType;
 import tseitin.Encoding;
 
 public class Translation {
 
-	private static final String NOT_NNF = "Input string is not nnf.";
-	
-	private static boolean valid = true;
-	
-	public static void main(String[] args) {
-		String in  = Paths.get("inputFiles",  "toy_5.sat").toString();
-		String out = Paths.get("outputFiles", "toy_5.dimacs").toString();
-		formula2cnf(in,out);
-	}	
+	private static final String NOT_NNF = "Input string is not nnf.";	
+	private static boolean valid = true;	
 
-	public static void formula2cnf(){
-		translateAndPrint(new InputStreamReader(System.in), System.out);
+	public static void formula2cnf(boolean bothImplications){
+		translateAndPrint(bothImplications, new InputStreamReader(System.in), System.out);
 	}
 	
-	public static void formula2cnf(String inputFileName){
+	public static void formula2cnf(boolean bothImplications, String inputFileName){
 		Reader r = IOUtils.getReader(inputFileName, valid);
-		translateAndPrint(r, System.out);
+		translateAndPrint(bothImplications, r, System.out);
 	}
 	
-	public static void formula2cnf(String inputFileName, String outputFileName){
+	public static void formula2cnf(boolean bothImplications, String inputFileName, String outputFileName){
 		Reader r = IOUtils.getReader(inputFileName, valid);
 		FileOutputStream fos = IOUtils.createOutputFile(outputFileName, valid);
-		translateAndPrint(r, fos);
+		translateAndPrint(bothImplications, r, fos);
 	}
 	
 	
-	private static void translateAndPrint(Reader r, OutputStream os) {
+	private static void translateAndPrint(boolean bothImplications, Reader r, OutputStream os) {
 		if (valid) {
-			String cnf = translate(r);
+			String cnf = translate(r, bothImplications);
 			if (valid)
 				IOUtils.print(os, cnf, valid);
 		}
 	}
 	
-	private static String translate(Reader r) {
+	private static String translate(Reader r, boolean bothImplications) {
 		
+		implicationType implType = bothImplications? implicationType.EQUIVALENCE : implicationType.LEFT_TO_RIGHT;
 		DerivationTree tree = new DerivationTree(r);
 		String dimacsCNF=null;
 		valid=tree.validNNF();
 		if (valid) {
 			Encoding tseitinEncoding = new Encoding();
-			tseitinEncoding.encode(tree);
-			dimacsCNF = DimacsCNF.getDimacsCNF(tseitinEncoding.getClauses(), tree.getNNFVariables(), tseitinEncoding.getTseitinVarCount());
+			tseitinEncoding.encode(tree, implType);
+			dimacsCNF = DimacsCNF.getDimacsCNF(
+					tseitinEncoding.getClauses(), tree.getNNFVariables(), tseitinEncoding.getTseitinVarCount());
 		}
 		else {
 			System.out.println(NOT_NNF);
