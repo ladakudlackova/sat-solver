@@ -6,7 +6,6 @@ import java.util.Collection;
 import simple_nnf_tree.DerivationNode;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import simple_nnf_tree.SimpleNNFOperatorToken.operators;
-import tseitin.CNFDefinition.implicationType;
 
 public class CNFDefinition extends Definition {
 

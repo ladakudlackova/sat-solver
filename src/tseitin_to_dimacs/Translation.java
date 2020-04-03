@@ -4,29 +4,37 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.List;
 
 import simple_nnf_tree.DerivationTree;
 import tseitin.CNFDefinition.implicationType;
+import utils.IOUtils;
 import tseitin.Encoding;
 
 public class Translation {
 
 	private static final String NOT_NNF = "Input string is not nnf.";	
 	private static boolean valid = true;	
+	private static Encoding tseitinEncoding;
 
 	public static void formula2cnf(boolean bothImplications){
 		translateAndPrint(bothImplications, new InputStreamReader(System.in), System.out);
 	}
 	
 	public static void formula2cnf(boolean bothImplications, String inputFileName){
-		Reader r = IOUtils.getReader(inputFileName, valid);
+		Reader r = IOUtils.createReader(inputFileName, valid);
 		translateAndPrint(bothImplications, r, System.out);
 	}
 	
 	public static void formula2cnf(boolean bothImplications, String inputFileName, String outputFileName){
-		Reader r = IOUtils.getReader(inputFileName, valid);
+		Reader r = IOUtils.createReader(inputFileName, valid);
 		FileOutputStream fos = IOUtils.createOutputFile(outputFileName, valid);
 		translateAndPrint(bothImplications, r, fos);
+	}
+	
+	public static String getFormula2cnfClauses(boolean bothImplications, String inputFileName){
+		Reader r = IOUtils.createReader(inputFileName, valid);
+		return translate(r, bothImplications);
 	}
 	
 	
@@ -45,7 +53,7 @@ public class Translation {
 		String dimacsCNF=null;
 		valid=tree.validNNF();
 		if (valid) {
-			Encoding tseitinEncoding = new Encoding();
+			tseitinEncoding = new Encoding();
 			tseitinEncoding.encode(tree, implType);
 			dimacsCNF = DimacsCNF.getDimacsCNF(
 					tseitinEncoding.getClauses(), tree.getNNFVariables(), tseitinEncoding.getTseitinVarCount());
