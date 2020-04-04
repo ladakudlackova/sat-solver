@@ -22,45 +22,44 @@ public class Translation {
 	}
 	
 	public static void formula2cnf(boolean bothImplications, String inputFileName){
-		Reader r = IOUtils.createReader(inputFileName, valid);
+		Reader r = IOUtils.createReader(inputFileName);
 		translateAndPrint(bothImplications, r, System.out);
 	}
 	
 	public static void formula2cnf(boolean bothImplications, String inputFileName, String outputFileName){
-		Reader r = IOUtils.createReader(inputFileName, valid);
-		FileOutputStream fos = IOUtils.createOutputFile(outputFileName, valid);
+		Reader r = IOUtils.createReader(inputFileName);
+		FileOutputStream fos = IOUtils.createOutputFile(outputFileName);
 		translateAndPrint(bothImplications, r, fos);
 	}
 	
-	public static String getFormula2cnfClauses(boolean bothImplications, String inputFileName){
-		Reader r = IOUtils.createReader(inputFileName, valid);
+	public static DimacsCNF formula2dimacsCNF(boolean bothImplications, String inputFileName){
+		Reader r = IOUtils.createReader(inputFileName);
 		return translate(r, bothImplications);
 	}
 	
 	
 	private static void translateAndPrint(boolean bothImplications, Reader r, OutputStream os) {
+		valid = (r!=null && os!=null);
 		if (valid) {
-			String cnf = translate(r, bothImplications);
+			DimacsCNF dimacsCNF = translate(r, bothImplications);
+			String cnf=dimacsCNF.toString();
 			if (valid)
 				IOUtils.print(os, cnf, valid);
 		}
 	}
 	
-	private static String translate(Reader r, boolean bothImplications) {
+	private static DimacsCNF translate(Reader r, boolean bothImplications) {
 		
 		implicationType implType = bothImplications? implicationType.EQUIVALENCE : implicationType.LEFT_TO_RIGHT;
 		DerivationTree tree = new DerivationTree(r);
-		String dimacsCNF=null;
 		valid=tree.validNNF();
 		if (valid) {
 			tseitinEncoding = new Encoding();
 			tseitinEncoding.encode(tree, implType);
-			dimacsCNF = DimacsCNF.getDimacsCNF(
-					tseitinEncoding.getClauses(), tree.getNNFVariables(), tseitinEncoding.getTseitinVarCount());
+			return new DimacsCNF(
+					tseitinEncoding.getClauses(), tree.getNNFVariables(), tseitinEncoding.getTseitinVariables());
 		}
-		else {
-			System.out.println(NOT_NNF);
-		}
-		return dimacsCNF;
+		System.out.println(NOT_NNF);
+		return null;
 	}
 }

@@ -14,22 +14,23 @@ public class IOUtils {
 	private static final String INVALID_OUTPUT_FILENAME	= "Invalid output file name.";
 	private static final String CANNOT_WRITE = "Cannot write to output.";
 	
-	public static FileReader createReader(String inputFileName, Boolean valid) {
+	public static FileReader createReader(String inputFileName) {
 		FileReader r=null;
 		try {
 			r = new FileReader(inputFileName);
 		} catch (FileNotFoundException e) {
-			reportError(INVALID_INPUT_FILENAME, valid);
+			reportError(INVALID_INPUT_FILENAME);
+			return null;
 		}
 		return r;
 	}	
 	
-	public static FileOutputStream createOutputFile(String outputFileName, Boolean valid) {
+	public static FileOutputStream createOutputFile(String outputFileName) {
 		FileOutputStream fos=null;
 		try {
 			fos = new FileOutputStream(new File(outputFileName));
 		} catch (FileNotFoundException e) {
-			reportError(INVALID_OUTPUT_FILENAME, valid);
+			reportError(INVALID_OUTPUT_FILENAME);
 		}
 		return fos;
 	}
@@ -39,20 +40,19 @@ public class IOUtils {
 			os.write(cnf.getBytes());
 			os.close();
 		} catch (IOException e) {
-			reportError(CANNOT_WRITE, valid);
+			reportError(CANNOT_WRITE);
 		}
 	}
 	
-	public static void closeReader(Reader r, Boolean valid) {
+	public static void closeReader(Reader r) {
 		try {
 			r.close();
 		} catch (IOException e) {
-			reportError(CANNOT_WRITE, valid);
+			reportError(CANNOT_WRITE);
 		}
 	}
 	
-	public static void reportError(String message, Boolean valid) {
-		valid=false;
+	public static void reportError(String message) {
 		System.out.println(message);
 	}
 }

@@ -36,7 +36,7 @@ public class Encoding {
 		return cnfDef.getClauses();
 	}
 	
-	public int getTseitinVarCount() {
-		return TseitinVariableToken.getCount();
+	public ArrayList<TseitinVariableToken> getTseitinVariables() {
+		return variables;
 	}
 }

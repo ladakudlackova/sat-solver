@@ -20,7 +20,7 @@ public class TranslationTest {
 	private static final File DATA_INPUT_FOLDER = Paths.get("src", "test","data", "input").toFile();
 	private static final String DATA_OUTPUT_PATH = Paths.get("src", "test","data", "output").toString();
 	private static final String SAT_EXT = ".sat";
-	private static final String DIMACS_EXT = ".dimacs";
+	private static final String DIMACS_EXT = ".cnf";
 	private static final String L_R = ".leftToRight"; 
 	private static final String AND = "and";
 
