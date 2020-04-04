@@ -2,11 +2,22 @@ package dpll;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 import tseitin.Assignment;
+import tseitin.TseitinVariableToken;
 import tseitin_to_dimacs.DimacsCNF;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
+
+//	TODO: 	clauses as object; solve;
+//			total time;
+//			organize project 
+
 
 public class Dpll {
 
@@ -15,12 +26,31 @@ public class Dpll {
 	
 	private static final File DATA_INPUT_FOLDER = Paths.get("src", "test","data", "input","toy_5.sat").toFile();
 	
-	public static void main(String[] args) {
+	private HashMap<TseitinVariableToken, List<List<Assignment>>> variableClausesEdges;
+	private List<List<Assignment>> clauses;
+	private int derivationCount=0;
+	private int decisionCount=0;
+	
+	// 
+	public static void wip_run_test(String[] args) {
 		
-		//args[0]
+		
 		DimacsCNF dimacsCNF = createDimacsCNF(DATA_INPUT_FOLDER.getPath().toString());
-		if (dimacsCNF==null)
-			return;	
+		if (dimacsCNF!=null) {
+			List<List<Assignment>> clauses =  (List<List<Assignment>>) dimacsCNF.getClauses();
+			HashMap<TseitinVariableToken, List<List<Assignment>>> variableClausesEdges = dimacsCNF.createVariableClausesEdges();
+			Dpll dpll = new Dpll(variableClausesEdges, clauses);
+		}
+			
+	}
+	
+	private Dpll(
+			HashMap<TseitinVariableToken, List<List<Assignment>>> variableClausesEdges,
+			List<List<Assignment>> clauses) {
+		
+		this.variableClausesEdges = variableClausesEdges;
+		this.clauses = clauses;
+		
 	}
 	
 	private static DimacsCNF createDimacsCNF(String inputFileName) {
@@ -32,8 +62,49 @@ public class Dpll {
 		return null;			
 	}
 	
-	public static Assignment[] dpll(DimacsCNF dimacsCNF) {
+	
+	
+	private List<Assignment> solve(
+			ArrayList<List<Assignment>> unitClauses,
+			HashMap<TseitinVariableToken, List<Assignment>> assignment) {
+		
+		// TODO:
+		// empty clauses 
+		// unit propagation
+		// nonsat
+		// decide
+		
 		return null;
+		
+		
+	}
+	
+	private List<Assignment> unitPropagation(
+			ArrayList<List<Assignment>> unitClauses,
+			List<Assignment> assignment) {
+		
+		while (true){
+			if (unitClauses.isEmpty())
+				return assignment;
+			List<Assignment> unitClause = unitClauses.remove(0);
+			clauses.remove(unitClause);
+			Assignment unit= unitClause.get(0);
+			assignment.add(unit);
+			boolean unitValue = unit.getValue();
+			TseitinVariableToken unitVar = unit.getVariable();
+			for (List<Assignment> unitVarClause: variableClausesEdges.get(unit.getVariable())) {
+													// TODO: method in Clause class
+				Assignment varA;
+				
+				for (Assignment a:unitVarClause) {
+					if (a.getVariable().equals(unitValue)) {
+						// ...
+					}
+				}
+			}
+			return null;
+		}
+		
 		
 	}
 	

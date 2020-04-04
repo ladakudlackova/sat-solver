@@ -12,6 +12,14 @@ public class Assignment {
 		this.value=value;
 	}
 	
+	public TseitinVariableToken getVariable() {
+		return var;
+	}
+	
+	public boolean getValue() {
+		return value;
+	}
+	
 	@Override
 	public String toString() {
 		if (value)

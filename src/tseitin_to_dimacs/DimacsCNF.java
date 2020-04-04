@@ -1,7 +1,9 @@
 package tseitin_to_dimacs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import simple_nnf_tree.SimpleNNFVariableToken;
@@ -18,23 +20,44 @@ public class DimacsCNF {
 	private static final String NL 		= System.lineSeparator();	
 	private static final int COMMENTS_LINE = 5;
 	
-	private Collection<Assignment[]> clauses;
+	private Collection<List<Assignment>> clauses;
 	private Collection<SimpleNNFVariableToken> nnfVars;
 	private ArrayList<TseitinVariableToken> variables;
+	private HashMap<TseitinVariableToken, List<List<Assignment>>> variableClausesEdges;
 	private int varsCount;
 	int rootVar;
 	
-	protected DimacsCNF(Collection<Assignment[]> clauses, 
-			Collection<SimpleNNFVariableToken> nnfVars, ArrayList<TseitinVariableToken> tseitinVars) {
-		this.clauses = clauses;
-		this.nnfVars = nnfVars;
+	
+	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount) {
+		clauses =  new ArrayList<List<Assignment>>();
+		initVariables(intClauses);	
+		this.varsCount = varsCount;
+		rootVar = nnfVars.size()+1;
+	}
+	
+	public DimacsCNF(Collection<Assignment[]> clauses, Collection<SimpleNNFVariableToken> nnfVariables,
+			ArrayList<TseitinVariableToken> tseitinVars) {
+		
+		this.clauses =  new ArrayList<List<Assignment>>();
+		for (Assignment[] clause:clauses)
+			this.clauses.add(Arrays.asList(clause));
+		this.nnfVars = nnfVariables;
 		this.varsCount = tseitinVars.size();
 		variables = tseitinVars;
 		rootVar = nnfVars.size()+1;
 	}
+
+	public HashMap<TseitinVariableToken, List<List<Assignment>>> createVariableClausesEdges() {
+		variableClausesEdges = new HashMap<TseitinVariableToken, List<List<Assignment>>>();
+		for (TseitinVariableToken var:variables) 
+			variableClausesEdges.put(var, new ArrayList<List<Assignment>>());
+		for (List<Assignment> clause : clauses)
+			for (Assignment a: clause)
+				variableClausesEdges.get(a.getVariable()).add(clause);
+		return variableClausesEdges;
+	}
 	
-	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount) {
-		clauses =  new ArrayList<Assignment[]>();
+	private void initVariables(Collection<Integer[]> intClauses) {
 		for (Integer[] intClause : intClauses) {
 			Assignment[] clause = new Assignment[intClause.length];
 			int i = 0;
@@ -45,9 +68,6 @@ public class DimacsCNF {
 					clause[i]= new Assignment(variables.get(-intAssignment), false);
 			}
 		}
-			
-		this.varsCount = varsCount;
-		rootVar = nnfVars.size()+1;
 	}
 	
 	@Override
@@ -96,20 +116,24 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	private void appendClauses(StringBuilder sb, Collection<Assignment[]> clauses) {
-		ArrayList<Assignment[]> clausesFromRoot = new ArrayList<Assignment[]>(clauses);
-		Assignment[] rootClause = clausesFromRoot.remove(clausesFromRoot.size()-1);
+	private void appendClauses(StringBuilder sb, Collection<List<Assignment>> clauses) {
+		ArrayList<List<Assignment>> clausesFromRoot = new ArrayList<List<Assignment>>(clauses);
+		List<Assignment> rootClause = clausesFromRoot.remove(clausesFromRoot.size()-1);
 		clausesFromRoot.add(0,rootClause);
-		for (Assignment[] clause: clausesFromRoot) 
+		for (List<Assignment> clause: clausesFromRoot) 
 			appendClause(sb, clause);
 	}
 	
-	private void appendClause(StringBuilder sb, Assignment[] clause) {
+	private void appendClause(StringBuilder sb, List<Assignment> clause) {
 		for (Assignment a:clause) {
 			sb.append(a.toString());
 			sb.append(" ");
 		}
 		sb.append("0");
 		sb.append(NL);
+	}
+	
+	public Collection<List<Assignment>> getClauses(){
+		return clauses;
 	}
 }
