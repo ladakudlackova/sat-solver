@@ -13,6 +13,11 @@ public class TseitinVariableToken extends FormulaToken {
 		token=getCount();
 	}
 
+	public TseitinVariableToken(int index) {
+		token=index;
+	}
+
+	
 	@Override
 	public String getToken() {
 		if (value)

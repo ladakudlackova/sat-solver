@@ -49,11 +49,16 @@ public class DimacsCNF {
 
 	public HashMap<TseitinVariableToken, List<List<Assignment>>> createVariableClausesEdges() {
 		variableClausesEdges = new HashMap<TseitinVariableToken, List<List<Assignment>>>();
-		for (TseitinVariableToken var:variables) 
+		for (TseitinVariableToken var:variables) {
 			variableClausesEdges.put(var, new ArrayList<List<Assignment>>());
+			System.out.println(var.getToken());
+		}
+		System.out.println("xxxxxxxxxxxxxxx");
 		for (List<Assignment> clause : clauses)
-			for (Assignment a: clause)
-				variableClausesEdges.get(a.getVariable()).add(clause);
+			for (Assignment a: clause) {
+				//variableClausesEdges.get(a.getVariable()).add(clause);
+				System.out.println(a.getVariable().token);
+			}
 		return variableClausesEdges;
 	}
 	

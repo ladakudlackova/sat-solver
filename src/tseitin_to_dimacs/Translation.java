@@ -34,7 +34,7 @@ public class Translation {
 			case 3:
 				formula2cnf(bothImplications, args[1], args[2]);
 				return;
-			default:
+			default: 
 				break;
 			}
 		}

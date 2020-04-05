@@ -22,6 +22,10 @@ public class Encoding {
 		TseitinVariableToken.reset();
 		addNNFVariables(tree);
 		tree.traverse(new VaribleNameDefinition());	
+		System.out.println(TseitinVariableToken.getCount()-tree.getNNFVariables().size());
+		for (int i=tree.getNNFVariables().size()+1; i<=TseitinVariableToken.getCount();i++) {
+			variables.add(new TseitinVariableToken(i));
+		}
 	}
 	
 	private void addNNFVariables(DerivationTree tree) {
