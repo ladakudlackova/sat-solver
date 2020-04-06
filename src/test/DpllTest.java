@@ -1,5 +1,6 @@
 package test;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,13 +30,20 @@ public class DpllTest {
 		
 		for (final File fileEntry : DATA_INPUT_FOLDER.listFiles()) {
 			try {
-				if (fileEntry.isFile() && fileEntry.getName().startsWith("rti")) {
-					String inputFileName = fileEntry.getPath();
-					assertTrue(checkAssignment(inputFileName));
+				if (fileEntry.isFile()) {
+					if (fileEntry.getName().startsWith("rti")) {		// ALL SAT
+						String inputFileName = fileEntry.getPath();
+						assertTrue(checkAssignment(inputFileName));
+					}
+					else if (fileEntry.getName().startsWith("unsat")) {	// ALL UNSAT
+						String inputFileName = fileEntry.getPath();
+						assertNull(checkAssignment(inputFileName));
+					}
 				}
 			} catch (Exception ex) {
-				//fail(ex.getMessage());
 				System.out.println(fileEntry.getName());
+				fail(ex.getMessage());      				 
+				
 			}
 		}
 	}
@@ -43,7 +51,6 @@ public class DpllTest {
 	private Boolean checkAssignment(String inputFileName) {
 		
 		DimacsCNF dimacsCNF = DimacsFileUtils.processDimacsFile(inputFileName) ;
-				//Translation..formula2dimacsCNF(false, inputFileName);
 		Boolean[] assignment = Dpll.solve(inputFileName);
 		for (ArrayList<Assignment> clause:dimacsCNF.getClauses()) {
 			boolean sat = false;

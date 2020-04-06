@@ -32,6 +32,8 @@ public class TranslationTest {
     		try {
     			if (fileEntry.isFile()) {
                 	String inputFileName = fileEntry.getName();
+                	if (!inputFileName.endsWith(SAT_EXT))
+                		continue;
                 	String outputFileName = Paths.get(
                 			DATA_OUTPUT_PATH, inputFileName.replace(SAT_EXT, L_R+DIMACS_EXT)).toString();
                 	Translation.formula2cnf(false, fileEntry.getPath(), outputFileName);

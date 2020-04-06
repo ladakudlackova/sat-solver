@@ -31,7 +31,6 @@ public class DimacsCNF {
 		clauses = new ArrayList<ArrayList<Assignment>>();
 		initVariables(intClauses, varsCount);
 		this.varsCount = varsCount;
-		//rootVar = nnfVars.size() + 1;
 	}
 
 	public DimacsCNF(Collection<Assignment[]> clauses, Collection<SimpleNNFVariableToken> nnfVariables,
@@ -51,7 +50,6 @@ public class DimacsCNF {
 	@SuppressWarnings("unchecked")
 	public ArrayList<ArrayList<Assignment>>[] createVariableClausesEdges() {
 		ArrayList<ArrayList<Assignment>>[] variableClausesEdges= new ArrayList[variables.size()+1];
-		//Object[] variableClausesEdges = new Object[variables.size()+1];    // TODO: shift
 		for (TseitinVariableToken var : getVariables()) {
 			variableClausesEdges[var.getIndex()] = new ArrayList<ArrayList<Assignment>>();
 		}
@@ -118,7 +116,7 @@ public class DimacsCNF {
 	}
 
 	private void appendHeader(StringBuilder sb, int nbvar, int nbclauses) {
-		// p cnf nbvar nbclauses
+		
 		sb.append(HEADER);
 		sb.append(nbvar);
 		sb.append(" ");
