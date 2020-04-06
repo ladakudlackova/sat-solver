@@ -25,6 +25,17 @@ public class TseitinVariableToken extends FormulaToken {
 		return "-"+token.toString();
 	}	
 	
+	public Integer getIndex() {
+		return (Integer) token;
+	}	
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof TseitinVariableToken)
+			return (getToken().equals(((TseitinVariableToken)o).getToken()));
+		return false;
+	}	
+	
 	protected static void reset() {
 		count=0;
 	}
