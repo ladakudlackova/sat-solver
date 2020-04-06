@@ -51,7 +51,7 @@ public class DimacsFileUtils {
 		String line;
 		try {
 			while ((line = dimacsReader.readLine()) != null)
-				if (!line.startsWith(DimacsCNF.COMMENT)) {
+				if (!line.startsWith("c")) {
 					if (line.startsWith(DimacsCNF.HEADER)) {
 						String[] words = line.split("\\s");
 						if (words.length==4)
@@ -83,7 +83,7 @@ public class DimacsFileUtils {
 	}
 	
 	private static Integer[] processClause(String line) {
-		String[] vars = line.split("\\s");
+		String[] vars = line.split("\\s+");
 		int len = vars.length - 1;
 		Integer[] clause = new Integer[len];
 		for (int i = 0; i < len; i++)

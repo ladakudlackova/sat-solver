@@ -20,32 +20,37 @@ public class Dpll {
 	private static final String DIMACS_EXT =".cnf";
 	private static final String SMT_LIB =".sat";
 	
-	private static final File DATA_INPUT_FOLDER = Paths.get("src", "test","data", "input","toy_5.sat").toFile();
 	
-	private List<List<Assignment>>[] variableClausesEdges;
+	
+	private ArrayList<ArrayList<Assignment>>[] variableClausesEdges;
 	private List<TseitinVariableToken> variables;
 	private int derivationCount=0;
 	private int decisionCount=0;
 	
 	// 
-	public static void main(String[] args) {
-		
-		
-		DimacsCNF dimacsCNF = createDimacsCNF(DATA_INPUT_FOLDER.getPath().toString());
-		if (dimacsCNF!=null) {
-			List<List<Assignment>> clauses =  (List<List<Assignment>>) dimacsCNF.getClauses();
-			List<List<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
+		public static void main(String[] args) {
 			
-			Dpll dpll = new Dpll(dimacsCNF.getVariables(), variableClausesEdges, clauses);
-			dpll.solve(clauses);
+			solve("src\\test\\data\\input\\and.sat");
 		}
+		
+		public static Boolean[] solve(String inputFileName) {
 			
-	}
+			DimacsCNF dimacsCNF = createDimacsCNF(inputFileName);
+			if (dimacsCNF!=null) {
+				ArrayList<ArrayList<Assignment>> clauses =  dimacsCNF.getClauses();
+				ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
+				
+				Dpll dpll = new Dpll(dimacsCNF.getVariables(), variableClausesEdges, clauses);
+				Boolean[] assignment = dpll.solve(clauses);
+				return assignment;
+			}				
+			return null;
+		}
 	
 	private Dpll(
 			ArrayList<TseitinVariableToken> variables,
-			List<List<Assignment>>[] variableClausesEdges,
-			List<List<Assignment>> clauses) {
+			ArrayList<ArrayList<Assignment>>[] variableClausesEdges,
+			ArrayList<ArrayList<Assignment>> clauses) {
 		
 		this.variableClausesEdges = variableClausesEdges;
 		this.variables=variables;
@@ -62,13 +67,13 @@ public class Dpll {
 	}
 	
 	private Boolean[] solve(
-			List<List<Assignment>> clauses){
+			ArrayList<ArrayList<Assignment>> clauses){
 		
 		ArrayList<List<Assignment>> unitClauses = new ArrayList<List<Assignment>>();
 		for (List<Assignment> clause:clauses)
 			if (clause.size()==1)
 				unitClauses.add(clause);
-		Boolean[] assignment = new Boolean[variables.size()];
+		Boolean[] assignment = new Boolean[variables.size()+1];
 		return solve( 
 				new State(unitClauses, assignment, clauses));
 				
@@ -82,10 +87,18 @@ public class Dpll {
 			return assignment;
 		if (assignment==null)
 			return null;
-		TseitinVariableToken var = variables.remove(0);
+		TseitinVariableToken var=null;
+		for (TseitinVariableToken v:variables)   //!!
+			if (assignment[v.getIndex()]==null) {
+				var=v;
+				assignment[var.getIndex()]=true;
+				break;
+			}
+		if (var==null)
+			return assignment;
 		
 		ArrayList<List<Assignment>> unitClauses0= new ArrayList<List<Assignment>>(state.unitClauses);
-		ArrayList<List<Assignment>> clauses0= new ArrayList<List<Assignment>>(state.clauses);
+		ArrayList<ArrayList<Assignment>> clauses0= new ArrayList<ArrayList<Assignment>>(state.clauses);
 		boolean valid = trySetValue(var, true, state.unitClauses, state.clauses);
 		if (valid) {
 			assignment = solve(new State(state.unitClauses, assignment, state.clauses));
@@ -95,14 +108,17 @@ public class Dpll {
 			}
 		}
 		
-		valid = trySetValue(var, false, unitClauses0,  new ArrayList<List<Assignment>>(clauses0));
+		valid = trySetValue(var, false, unitClauses0,  new ArrayList<ArrayList<Assignment>>(clauses0));
+		
 		if (valid) {
-			assignment = solve(new State(unitClauses0, assignment, clauses0));
+			state.assignment[var.getIndex()]=false;
+			assignment = solve(new State(unitClauses0, state.assignment, clauses0));
 			if (assignment!=null) {
-				assignment[var.getIndex()]=true;
+				//assignment[var.getIndex()]=true;
 				return assignment;
 			}
 		}
+		variables.add(var);
 		return null;
 	}
 	
@@ -135,7 +151,7 @@ public class Dpll {
 	private boolean trySetValue(TseitinVariableToken var,
 			boolean value,
 			ArrayList<List<Assignment>> unitClauses,
-			List<List<Assignment>> clauses ) {
+			ArrayList<ArrayList<Assignment>> clauses ) {
 		
 		for (List<Assignment> clause : variableClausesEdges[var.getIndex()]) {
 			for (int i=0;i<clause.size();i++) {
