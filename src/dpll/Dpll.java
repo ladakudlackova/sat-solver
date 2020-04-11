@@ -10,167 +10,146 @@ import tseitin_to_dimacs.DimacsCNF;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
-//	TODO: 	don't copy state (inferred list)
+//	TODO: 	
 //			total time;
 //			organize project 
 
-
 public class Dpll {
 
-	private static final String DIMACS_EXT =".cnf";
-	private static final String SMT_LIB =".sat";
-	
-	
-	
+	private static final String DIMACS_EXT = ".cnf";
+	private static final String SMT_LIB = ".sat";
+
 	private ArrayList<ArrayList<Assignment>>[] variableClausesEdges;
+	private Boolean[] assignment;
 	private List<TseitinVariableToken> variables;
-	private int derivationCount=0;
-	private int decisionCount=0;
-	
-	// 
-		public static void main(String[] args) {
-			
-			solve("src\\test\\data\\input\\and.sat");
-		}
-		
-		public static Boolean[] solve(String inputFileName) {
-			
-			DimacsCNF dimacsCNF = createDimacsCNF(inputFileName);
-			if (dimacsCNF!=null) {
-				ArrayList<ArrayList<Assignment>> clauses =  dimacsCNF.getClauses();
-				ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
-				
-				Dpll dpll = new Dpll(dimacsCNF.getVariables(), variableClausesEdges, clauses);
-				Boolean[] assignment = dpll.solve(clauses);
-				return assignment;
-			}				
-			return null;
-		}
-	
-	private Dpll(
-			ArrayList<TseitinVariableToken> variables,
-			ArrayList<ArrayList<Assignment>>[] variableClausesEdges,
-			ArrayList<ArrayList<Assignment>> clauses) {
-		
-		this.variableClausesEdges = variableClausesEdges;
-		this.variables=variables;
-		
+	private boolean unsat = false;
+	private int derivationCount = 0;
+	private int decisionCount = 0;
+
+	//
+	public static void main(String[] args) {
+
+		solve(args[0]);
 	}
-	
+
+	public static Boolean[] solve(String inputFileName) {
+
+		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName);
+		if (dimacsCNF != null) {
+			ArrayList<ArrayList<Assignment>> clauses = dimacsCNF.getClauses();
+			ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
+
+			Dpll dpll = new Dpll(dimacsCNF.getVariables(), variableClausesEdges, clauses);
+			dpll.solve(clauses);
+			return dpll.assignment;
+		}
+		return null;
+	}
+
+	private Dpll(ArrayList<TseitinVariableToken> variables, ArrayList<ArrayList<Assignment>>[] variableClausesEdges,
+			ArrayList<ArrayList<Assignment>> clauses) {
+
+		this.variableClausesEdges = variableClausesEdges;
+		this.variables = variables;
+		assignment=new Boolean[variables.size()+1];
+	}
+
 	private static DimacsCNF createDimacsCNF(String inputFileName) {
-		if (inputFileName.endsWith(DIMACS_EXT)) 
+		if (inputFileName.endsWith(DIMACS_EXT))
 			return DimacsFileUtils.processDimacsFile(inputFileName);
 		if (inputFileName.endsWith(SMT_LIB)) {
 			return Translation.formula2dimacsCNF(false, inputFileName);
 		}
-		return null;			
-	}
-	
-	private Boolean[] solve(
-			ArrayList<ArrayList<Assignment>> clauses){
-		
-		ArrayList<List<Assignment>> unitClauses = new ArrayList<List<Assignment>>();
-		for (List<Assignment> clause:clauses)
-			if (clause.size()==1)
-				unitClauses.add(clause);
-		Boolean[] assignment = new Boolean[variables.size()+1];
-		return solve( 
-				new State(unitClauses, assignment, clauses));
-				
-	}
-	
-	
-	private Boolean[] solve(State state) {
-		
-		Boolean[] assignment = unitPropagation(state);
-		if (state.clauses.isEmpty())
-			return assignment;
-		if (assignment==null)
-			return null;
-		TseitinVariableToken var=null;
-		for (TseitinVariableToken v:variables)   //!!
-			if (assignment[v.getIndex()]==null) {
-				var=v;
-				assignment[var.getIndex()]=true;
-				break;
-			}
-		if (var==null)
-			return assignment;
-		
-		ArrayList<List<Assignment>> unitClauses0= new ArrayList<List<Assignment>>(state.unitClauses);
-		ArrayList<ArrayList<Assignment>> clauses0= new ArrayList<ArrayList<Assignment>>(state.clauses);
-		boolean valid = trySetValue(var, true, state.unitClauses, state.clauses);
-		if (valid) {
-			assignment = solve(new State(state.unitClauses, assignment, state.clauses));
-			if (assignment!=null) {
-				assignment[var.getIndex()]=true;
-				return assignment;
-			}
-		}
-		
-		valid = trySetValue(var, false, unitClauses0,  new ArrayList<ArrayList<Assignment>>(clauses0));
-		
-		if (valid) {
-			state.assignment[var.getIndex()]=false;
-			assignment = solve(new State(unitClauses0, state.assignment, clauses0));
-			if (assignment!=null) {
-				//assignment[var.getIndex()]=true;
-				return assignment;
-			}
-		}
-		variables.add(var);
 		return null;
 	}
+
 	
-	
-	private Boolean[] unitPropagation(
-				State state) {	
+
+	private void solve(ArrayList<ArrayList<Assignment>> clauses0) {
+
+		unsat = false;
+		ArrayList<List<Assignment>> unitClauses = new ArrayList<List<Assignment>>();
+		ArrayList<ArrayList<Assignment>> clauses = new ArrayList<ArrayList<Assignment>>(clauses0);
+		for (List<Assignment> clause : clauses)
+			if (clause.size() == 1)
+				unitClauses.add(clause);
+		List<Integer> last = unitPropagation(unitClauses, clauses);
+		if (clauses.isEmpty())
+			return;
+		if (unsat) {
+			resetAssignment(last);
+			return;
+		}
+		TseitinVariableToken var = null;
+		for (TseitinVariableToken v : variables) // !!
+			if (assignment[v.getIndex()] == null) {
+				var = v;
+				assignment[var.getIndex()] = true;
+				break;
+			}
+		if (var == null) {
+			throw new RuntimeException(); // never
+		}
+
+		assignment[var.getIndex()] = true;
+		last.add(var.getIndex());
+		solve(clauses);
+		if (!unsat) 
+			return;
 		
-		while (true){
-			if (state.unitClauses.isEmpty())
-				return state.assignment;
-			List<Assignment> unitClause = state.unitClauses.remove(0);
-			state.clauses.remove(unitClause);
-			Assignment unit= unitClause.get(0);
-			state.assignment[unit.getVariable().getIndex()]= unit.getValue();
+		assignment[var.getIndex()] = false;
+		solve(clauses0);
+		if (!unsat) 
+			return;
+		resetAssignment(last);	
+	}
+
+	private List<Integer> unitPropagation(ArrayList<List<Assignment>> unitClauses,
+			ArrayList<ArrayList<Assignment>> clauses) {
+
+		List<Integer> last = new ArrayList<Integer>();
+		while (true) {
+			if (unitClauses.isEmpty())
+				return last;
+			List<Assignment> unitClause = unitClauses.remove(0);
+			clauses.remove(unitClause);
+			Assignment unit = unitClause.get(0);
 			TseitinVariableToken unitVar = unit.getVariable();
 			boolean unitValue = unit.getValue();
-			variables.remove(unitVar);
-			boolean valid=trySetValue(unitVar, unitValue, state.unitClauses, state.clauses);
-			if (valid) {
-				state.assignment[unitVar.getIndex()]=unitValue;
-				return state.assignment;
-			}
-			else
-				return null;
-			
-			
-		}		
+			assignment[unitVar.getIndex()] = unitValue;
+			last.add(unitVar.getIndex());
+			infer(unit, unitClauses, clauses);
+		}
 	}
-	
-	private boolean trySetValue(TseitinVariableToken var,
-			boolean value,
-			ArrayList<List<Assignment>> unitClauses,
-			ArrayList<ArrayList<Assignment>> clauses ) {
-		
-		for (List<Assignment> clause : variableClausesEdges[var.getIndex()]) {
-			for (int i=0;i<clause.size();i++) {
-				Assignment a=clause.get(i);
-				if (a.getVariable().equals(var)) {
-					if (a.getValue()==value)
+
+	private void resetAssignment(List<Integer> last) {
+		for (Integer i : last)
+			assignment[i] = null;
+	}
+
+	private void infer(Assignment unit, ArrayList<List<Assignment>> unitClauses,
+			ArrayList<ArrayList<Assignment>> clauses) {
+
+		for (List<Assignment> clause : variableClausesEdges[unit.getVariable().getIndex()]) {
+			for (int i = 0; i < clause.size(); i++) {
+				Assignment a = clause.get(i);
+				if (a.getVariable().equals(unit.getVariable())) {
+					if (a.getValue() == unit.getValue())
 						clauses.remove(clause);
 					else {
-						clause.remove(i);
-						if (clause.size()==1)
+						if (clause.size() == 2) {
+							clause.remove(i);
 							unitClauses.add(clause);
-						else if (clause.size()==0)
-							return false; // UNSAT
+
+						} else if (clause.size() == 1) {
+							unsat = true;
+							return; // UNSAT
+						}
 					}
 				}
 			}
 		}
-		return true;
+
 	}
-	
-	
+
 }

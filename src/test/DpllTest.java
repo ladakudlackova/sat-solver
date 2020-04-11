@@ -19,14 +19,18 @@ import tseitin_to_dimacs.DimacsCNF;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
+
 @FixMethodOrder
 public class DpllTest {
 
-	private static final File DATA_INPUT_FOLDER = Paths.get("src", "test", "data", "input").toFile();
+	// TODO: use sat/unsat folder
+	
+	private static final File DATA_INPUT_FOLDER 
+		= Paths.get("src", "test", "data", "input", "task_2", "unsat").toFile();
 
 	@Test
 	@Order(1)
-	public void testDpllSolver() {
+	public void testDpllSolver() {       
 		
 		for (final File fileEntry : DATA_INPUT_FOLDER.listFiles()) {
 			try {
@@ -35,9 +39,10 @@ public class DpllTest {
 						String inputFileName = fileEntry.getPath();
 						assertTrue(checkAssignment(inputFileName));
 					}
-					else if (fileEntry.getName().startsWith("unsat")) {	// ALL UNSAT
+					else if (fileEntry.getName().startsWith("u")) {	// ALL UNSAT
 						String inputFileName = fileEntry.getPath();
-						assertNull(checkAssignment(inputFileName));
+						Boolean[] assignment = Dpll.solve(inputFileName);
+						assertNull(assignment);  
 					}
 				}
 			} catch (Exception ex) {

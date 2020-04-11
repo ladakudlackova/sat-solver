@@ -29,7 +29,7 @@ public class DimacsCNF {
 
 	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount) {
 		clauses = new ArrayList<ArrayList<Assignment>>();
-		initVariables(intClauses, varsCount);
+		init(intClauses, varsCount);
 		this.varsCount = varsCount;
 	}
 
@@ -60,7 +60,7 @@ public class DimacsCNF {
 		return variableClausesEdges;
 	}
 
-	private void initVariables(Collection<Integer[]> intClauses, int varsCount) {
+	private void init(Collection<Integer[]> intClauses, int varsCount) {
 		variables=new ArrayList<TseitinVariableToken>();
 		for (int index = 1; index<=varsCount+1; index++)
 			variables.add(new TseitinVariableToken(index));
@@ -74,6 +74,8 @@ public class DimacsCNF {
 					clause[i] = new Assignment(getVariables().get(-intAssignment), false);
 				i++;
 			}
+			ArrayList<Assignment> clauseList = new ArrayList<Assignment>( Arrays.asList(clause));
+			clauses.add(clauseList);
 			
 		}
 	}

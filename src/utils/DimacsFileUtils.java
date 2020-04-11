@@ -53,7 +53,7 @@ public class DimacsFileUtils {
 			while ((line = dimacsReader.readLine()) != null)
 				if (!line.startsWith("c")) {
 					if (line.startsWith(DimacsCNF.HEADER)) {
-						String[] words = line.split("\\s");
+						String[] words = line.split("\\s+");
 						if (words.length==4)
 							return Integer.parseInt(words[2]);
 						break;
@@ -83,7 +83,7 @@ public class DimacsFileUtils {
 	}
 	
 	private static Integer[] processClause(String line) {
-		String[] vars = line.split("\\s+");
+		String[] vars = line.trim().split("\\s+");
 		int len = vars.length - 1;
 		Integer[] clause = new Integer[len];
 		for (int i = 0; i < len; i++)
