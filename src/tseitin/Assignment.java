@@ -23,7 +23,7 @@ public class Assignment {
 	@Override
 	public String toString() {
 		if (value)
-			return var.getToken();
-		return NEG+var.getToken();
+			return var.getToken()+".";
+		return NEG+var.getToken()+".";
 	}
 }

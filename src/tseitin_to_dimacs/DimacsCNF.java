@@ -62,7 +62,8 @@ public class DimacsCNF {
 
 	private void init(Collection<Integer[]> intClauses, int varsCount) {
 		variables=new ArrayList<TseitinVariableToken>();
-		for (int index = 1; index<=varsCount+1; index++)
+		variables.add(null);
+		for (int index = 1; index<=varsCount; index++)
 			variables.add(new TseitinVariableToken(index));
 		for (Integer[] intClause : intClauses) {
 			Assignment[] clause = new Assignment[intClause.length];
@@ -75,9 +76,9 @@ public class DimacsCNF {
 				i++;
 			}
 			ArrayList<Assignment> clauseList = new ArrayList<Assignment>( Arrays.asList(clause));
-			clauses.add(clauseList);
-			
+			clauses.add(clauseList);			
 		}
+		variables.remove(0);
 	}
 
 	@Override
@@ -126,8 +127,8 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	private void appendClauses(StringBuilder sb, ArrayList<ArrayList<Assignment>> clauses2) {
-		ArrayList<List<Assignment>> clausesFromRoot = new ArrayList<List<Assignment>>(clauses2);
+	private void appendClauses(StringBuilder sb, ArrayList<ArrayList<Assignment>> clauses) {
+		ArrayList<List<Assignment>> clausesFromRoot = new ArrayList<List<Assignment>>(clauses);
 		List<Assignment> rootClause = clausesFromRoot.remove(clausesFromRoot.size() - 1);
 		clausesFromRoot.add(0, rootClause);
 		for (List<Assignment> clause : clausesFromRoot)

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -23,51 +24,59 @@ import utils.DimacsFileUtils;
 @FixMethodOrder
 public class DpllTest {
 
-	// TODO: use sat/unsat folder
 	
-	private static final File DATA_INPUT_FOLDER 
-		= Paths.get("src", "test", "data", "input", "task_2", "unsat").toFile();
+	
+	private static final Path SAT_CNF_FOLDER 
+		= Paths.get("src", "test", "data", "input", "task_2", "sat");
+	private static final Path UNSAT_CNF_FOLDER 
+	= Paths.get("src", "test", "data", "input", "task_2","unsat");
 
 	@Test
 	@Order(1)
 	public void testDpllSolver() {       
 		
-		for (final File fileEntry : DATA_INPUT_FOLDER.listFiles()) {
+		testInputFiles(SAT_CNF_FOLDER.toFile(), true);
+		testInputFiles(UNSAT_CNF_FOLDER.toFile(), false);
+		
+	}
+	
+	private void testInputFiles(File folder, Boolean sat) {
+		for (final File fileEntry : folder.listFiles()) {
 			try {
 				if (fileEntry.isFile()) {
-					if (fileEntry.getName().startsWith("rti")) {		// ALL SAT
-						String inputFileName = fileEntry.getPath();
-						assertTrue(checkAssignment(inputFileName));
-					}
-					else if (fileEntry.getName().startsWith("u")) {	// ALL UNSAT
-						String inputFileName = fileEntry.getPath();
-						Boolean[] assignment = Dpll.solve(inputFileName);
-						assertNull(assignment);  
-					}
+					String inputFileName = fileEntry.getPath();
+					checkAssignment(inputFileName, sat);
 				}
 			} catch (Exception ex) {
-				System.out.println(fileEntry.getName());
-				fail(ex.getMessage());      				 
-				
+				//ex.printStackTrace();
+				System.out.println(ex.getMessage());
+				fail(ex.getMessage());      				 				
 			}
 		}
 	}
 	
-	private Boolean checkAssignment(String inputFileName) {
+	
+	
+	private void checkAssignment(String inputFileName, Boolean sat) {
 		
 		DimacsCNF dimacsCNF = DimacsFileUtils.processDimacsFile(inputFileName) ;
 		Boolean[] assignment = Dpll.solve(inputFileName);
+		if (!sat) {
+			assertNull(assignment);  
+			return;
+		}
+		boolean satClauses = true;
 		for (ArrayList<Assignment> clause:dimacsCNF.getClauses()) {
-			boolean sat = false;
+			satClauses = false;
 			for (Assignment a:clause) {
 				if (a.getValue()==assignment[a.getVariable().getIndex()]) {
-					sat = true;
+					satClauses = true;
 					break;
 				}					
 			}
-			if (!sat)
-				return false;
+			if (!satClauses)
+				break;
 		}
-		return true;
+		assertTrue(satClauses);
 	}
 }

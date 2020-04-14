@@ -23,7 +23,6 @@ public class DimacsFileUtils {
 		return null;
 	}
 	
-//
 	public static List<Integer[]> processDimacsCnf(String clauses) {
 		BufferedReader dimacsReader = new BufferedReader(new StringReader(clauses));
 		return processClauses(dimacsReader);
@@ -72,6 +71,8 @@ public class DimacsFileUtils {
 		String line;
 		try {
 			while ((line = dimacsReader.readLine()) != null) {
+				if (line.equals("%"))
+					break;
 				Integer[]clause = processClause(line);
 				clauses.add(clause);
 			}
