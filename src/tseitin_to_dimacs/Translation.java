@@ -4,6 +4,8 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+
 import simple_nnf_tree.DerivationTree;
 import tseitin.CNFDefinition.implicationType;
 import utils.IOUtils;
@@ -15,30 +17,33 @@ public class Translation {
 	private static boolean valid = true;
 	private static Encoding tseitinEncoding;
 
-	// TODO: code properly
 	public static void main(String[] args) {
-		Boolean bothImplications = null;
-		if (args.length > 0) {
-			String arg0 = args[args.length-1].toLowerCase();
-			if (arg0.equals("true") || arg0.equals("1"))
+		
+		ArrayList<String> args_withoutOption = new ArrayList<String>();
+		Boolean bothImplications = false;
+		for (String arg : args) {
+			if (arg.toLowerCase().equals("true") || arg.equals("1"))
 				bothImplications = true;
-			else 
+			else if (arg.toLowerCase().equals("false") || arg.equals("0"))
 				bothImplications = false;
-			switch (args.length) {
-			case 1:
-				formula2cnf(bothImplications);
-				return;
-			case 2:
-				formula2cnf(bothImplications, args[1]);
-				return;
-			case 3:
-				formula2cnf(bothImplications, args[1], args[2]);
-				return;
-			default: 
-				break;
-			}
+			else
+				args_withoutOption.add(arg);
 		}
-		System.out.println("Invalid count of parameters.");
+		switch (args_withoutOption.size()) {
+		case 0:
+			formula2cnf(bothImplications);
+			return;
+		case 1:
+			formula2cnf(bothImplications, args_withoutOption.get(0));
+			return;
+		case 2:
+			formula2cnf(bothImplications, args_withoutOption.get(0), args_withoutOption.get(1));
+			return;
+		default:
+			System.out.println("Invalid count of parameters.");
+			return;
+		}
+
 	}
 
 	public static void formula2cnf(boolean bothImplications) {

@@ -58,7 +58,6 @@ public class State {
 		StringBuilder key = new StringBuilder();
 		for (Assignment a:clause)
 			key.append(a.toString());
-		Object o =clausesMap.get(key.toString());
 		return clausesMap.get(key.toString());
 	}
 	

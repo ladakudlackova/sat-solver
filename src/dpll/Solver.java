@@ -10,7 +10,6 @@ import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
 //	TODO: 	equality on clauses; stack instead of recursion
-//			total time;
 //			organize project 
 
 public class Solver {

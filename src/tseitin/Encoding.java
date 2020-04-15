@@ -11,9 +11,9 @@ public class Encoding {
 	ArrayList<TseitinVariableToken> variables = new ArrayList<TseitinVariableToken>();
 	CNFDefinition cnfDef;
 	
-	public void encode(DerivationTree tree, CNFDefinition.implicationType impicationType) {
+	public void encode(DerivationTree tree, CNFDefinition.implicationType implicationType) {
 		initVariables(tree);
-		cnfDef = new CNFDefinition(impicationType);
+		cnfDef = new CNFDefinition(implicationType);
 		tree.traverse(cnfDef);
 		cnfDef.addRootClause(tree.getRoot());
 	}
@@ -21,7 +21,7 @@ public class Encoding {
 	private void initVariables(DerivationTree tree) {
 		TseitinVariableToken.reset();
 		addNNFVariables(tree);
-		tree.traverse(new VaribleNameDefinition());	
+		tree.traverse(new VariableNameDefinition());	
 		for (int i=tree.getNNFVariables().size()+1; i<=TseitinVariableToken.getCount();i++) {
 			variables.add(new TseitinVariableToken(i));
 		}

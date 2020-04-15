@@ -11,14 +11,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 
-import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import dpll.Solver;
 import tseitin.Assignment;
 import tseitin_to_dimacs.DimacsCNF;
-import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
 

@@ -7,7 +7,7 @@ public abstract class Definition {
 }
 
 
-class VaribleNameDefinition extends Definition {
+class VariableNameDefinition extends Definition {
 
 	@Override
 	public void define(DerivationNode node) {
