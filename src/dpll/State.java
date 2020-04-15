@@ -12,6 +12,10 @@ public class State {
 	protected ArrayList<List<Assignment>> unitClauses;
 	protected ArrayList<ArrayList<Assignment>>[] variableClausesEdges;
 	
+	protected State(State s) {
+	   this(s.clauses, s.unitClauses, s.variableClausesEdges);
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected State(
 			ArrayList<ArrayList<Assignment>> clauses,
@@ -58,25 +62,4 @@ public class State {
 		return clausesMap.get(key.toString());
 	}
 	
-	protected void print() {
-		System.out.println("CLAUSES:");
-		for (ArrayList<Assignment> clause:clauses) {
-			for (Assignment a:clause)
-				System.out.print(a+" ");
-			System.out.print(" x ");
-		}
-		System.out.println();
-		//System.out.println("UNIT CLAUSES:");
-/*		System.out.println("VAR_EDGES:");
-		int len=variableClausesEdges.length;
-		for (int i=1;i<len;i++) {
-			for (ArrayList<Assignment> clause:variableClausesEdges[i]) {
-				for (Assignment a:clause)
-					System.out.print(a+" ");
-				System.out.print(" x ");
-			}
-		System.out.println();
-			
-		}*/
-	}
 }

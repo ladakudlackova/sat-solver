@@ -151,4 +151,8 @@ public class DimacsCNF {
 	public ArrayList<TseitinVariableToken> getVariables() {
 		return variables;
 	}
+	
+	public Collection<SimpleNNFVariableToken> getNNFVars() {
+		return nnfVars;
+	}
 }
