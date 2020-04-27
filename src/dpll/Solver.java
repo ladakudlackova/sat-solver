@@ -1,11 +1,11 @@
 package dpll;
 
-import java.util.ArrayList;
 import java.util.Collection;
+
+import dimacs.Clauses;
+import dimacs.DimacsCNF;
 import simple_nnf_tree.SimpleNNFVariableToken;
-import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
-import tseitin_to_dimacs.DimacsCNF;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
@@ -27,10 +27,11 @@ public class Solver {
 		long start = System.currentTimeMillis();
 		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName);
 		if (dimacsCNF != null) {
-			ArrayList<ArrayList<Assignment>> clauses = dimacsCNF.getClauses();
-			ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
-			Dpll dpll = new Dpll(dimacsCNF.getVariables(), variableClausesEdges, clauses);
-			Boolean[] assignment = dpll.solve(clauses,variableClausesEdges);
+			Clauses clauses = dimacsCNF.getClauses();
+			
+			//ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
+			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
+			Boolean[] assignment = dpll.solveXXX();
 			long finish = System.currentTimeMillis();
 			printResult(assignment, dimacsCNF, finish - start,
 					dpll.getDecisionCount(), dpll.getUnitPropagationSteps());

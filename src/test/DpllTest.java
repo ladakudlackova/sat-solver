@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
+import dimacs.DimacsCNF;
 import dpll.Solver;
 import tseitin.Assignment;
-import tseitin_to_dimacs.DimacsCNF;
 import utils.DimacsFileUtils;
 
 
@@ -51,8 +51,7 @@ public class DpllTest {
 						assertNull(assignment);
 				}
 			} catch (Exception ex) {
-				//ex.printStackTrace();
-				System.out.println(ex.getMessage());
+				ex.printStackTrace();
 				fail(ex.getMessage());      				 				
 			}
 		}
@@ -72,7 +71,7 @@ public class DpllTest {
 			try {
 				if (fileEntry.isFile()) {
 					String inputFileName = fileEntry.getPath();
-					checkAssignment(inputFileName, sat);
+					//checkAssignment(inputFileName, sat);
 				}
 			} catch (Exception ex) {
 				fail(ex.getMessage());      				 				
@@ -82,7 +81,7 @@ public class DpllTest {
 	
 	
 	
-	private void checkAssignment(String inputFileName, Boolean sat) {
+/*	private void checkAssignment(String inputFileName, Boolean sat) {
 		
 		DimacsCNF dimacsCNF = DimacsFileUtils.processDimacsFile(inputFileName) ;
 		Boolean[] assignment = Solver.solve(inputFileName);
@@ -104,4 +103,5 @@ public class DpllTest {
 		}
 		assertTrue(satClauses);
 	}
+	*/
 }

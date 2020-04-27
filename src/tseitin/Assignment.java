@@ -5,9 +5,9 @@ public class Assignment {
 	private static final String NEG = "-";
 	
 	private TseitinVariableToken var;
-	private boolean value;
+	private Boolean value;
 	
-	public Assignment(TseitinVariableToken var, boolean value) {
+	public Assignment(TseitinVariableToken var, Boolean value) {
 		this.var=var;
 		this.value=value;
 	}
@@ -16,7 +16,7 @@ public class Assignment {
 		return var;
 	}
 	
-	public boolean getValue() {
+	public Boolean getValue() {
 		return value;
 	}
 	

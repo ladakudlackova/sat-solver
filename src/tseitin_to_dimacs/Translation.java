@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 
+import dimacs.DimacsCNF;
 import simple_nnf_tree.DerivationTree;
 import tseitin.CNFDefinition.implicationType;
 import utils.IOUtils;

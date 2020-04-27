@@ -6,7 +6,7 @@ public class TseitinVariableToken extends FormulaToken {
 	
 	private static int count = 0;
 	
-	private boolean value = true;
+	private Boolean value = null;
 	
 	public TseitinVariableToken() {
 		count = getCount() + 1;
@@ -29,6 +29,7 @@ public class TseitinVariableToken extends FormulaToken {
 		return (Integer) token;
 	}	
 	
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof TseitinVariableToken)
@@ -42,5 +43,13 @@ public class TseitinVariableToken extends FormulaToken {
 
 	public static int getCount() {
 		return count;
+	}
+
+	public void setValue(Boolean value) {
+		this.value=value;	
+	}
+	
+	public Boolean getValue() {
+		return value;	
 	}
 }

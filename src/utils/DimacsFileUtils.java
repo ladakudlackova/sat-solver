@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import tseitin_to_dimacs.DimacsCNF;
+import dimacs.DimacsCNF;
 
 
 public class DimacsFileUtils {
