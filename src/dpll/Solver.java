@@ -9,9 +9,6 @@ import tseitin.TseitinVariableToken;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
 
-//	TODO: 	equality on clauses; stack instead of recursion
-//			organize project 
-
 public class Solver {
 
 	private static final String DIMACS_EXT = ".cnf";
@@ -29,9 +26,8 @@ public class Solver {
 		if (dimacsCNF != null) {
 			Clauses clauses = dimacsCNF.getClauses();
 			
-			//ArrayList<ArrayList<Assignment>>[] variableClausesEdges = dimacsCNF.createVariableClausesEdges();
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
-			Boolean[] assignment = dpll.solveXXX();
+			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
 			printResult(assignment, dimacsCNF, finish - start,
 					dpll.getDecisionCount(), dpll.getUnitPropagationSteps());
@@ -80,7 +76,7 @@ public class Solver {
 		}
 		System.out.println(timeElapsed+" ms");
 		System.out.println("Number of decisions: "+decisionCount);
-		System.out.println("Number of unit propagation steps: "+unitPropagationSteps);
+		//System.out.println("Number of unit propagation steps: "+unitPropagationSteps);
 	}
 
 }

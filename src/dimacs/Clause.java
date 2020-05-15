@@ -110,5 +110,17 @@ public class Clause {
 		return !failedVariables.isEmpty();
 	}
 	
+	// only for debugging
+	@Override
+	public String toString() {
+		String result = "";
+		for (TseitinVariableToken v:posLiterals) {
+			result=result+" +"+v.toString();
+		}
+		for (TseitinVariableToken v:negLiterals) {
+			result=result+" -"+v.toString();
+		}
+		return result;
+	}
 	
 }

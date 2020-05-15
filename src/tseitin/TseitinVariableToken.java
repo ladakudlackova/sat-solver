@@ -52,4 +52,9 @@ public class TseitinVariableToken extends FormulaToken {
 	public Boolean getValue() {
 		return value;	
 	}
+	
+	@Override
+	public String toString() {                                    // 
+		return getIndex().toString();
+	}
 }

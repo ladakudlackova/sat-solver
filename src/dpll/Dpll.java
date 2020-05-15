@@ -27,10 +27,10 @@ public class Dpll {
 		assignment=new Boolean[variables.length];
 	}
 	
-	protected Boolean[] solveXXX() {
+	protected Boolean[] solveClauses() {
 		
 		try {
-		solve();
+			solve();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -45,17 +45,13 @@ public class Dpll {
 	
 
 	private void solve() {
-		for (Boolean b:assignment)
-			System.out.print(b+" ");
-		System.out.println(clauses.getUnsatisfiedCount());
+		
 		unsat = false;	
 		List<Integer> last = unitPropagation();	
-		//int derivedCount = last.size();
 		if (unsat) {
 			resetAssignment(last);
 			return;
 		}	
-		//unitPropagationSteps=unitPropagationSteps+derivedCount;
 		if (clauses.getUnsatisfiedCount()==0)
 			return;
 		TseitinVariableToken var = chooseVariable();
@@ -72,7 +68,6 @@ public class Dpll {
 		decideAndSolve(var, false);
 		if (!unsat) 
 			return;
-		//unitPropagationSteps=unitPropagationSteps-derivedCount;
 		resetAssignment(last);	
 	}
 	
@@ -86,11 +81,11 @@ public class Dpll {
 	private List<Integer> unitPropagation() {
 
 		List<Integer> last = new ArrayList<Integer>();
-		Iterator<Clause> unitClauses;
-		while (!unsat && clauses.getUnitClauses().hasNext()) {
-			unitClauses=clauses.getUnitClauses();                // !!!
-			Clause unitClause = unitClauses.next();
-			unitClauses.remove();
+		ArrayList<Clause> unitClauses=clauses.getUnitClauses();
+		while (!unsat && !unitClauses.isEmpty()) {  
+			Clause unitClause = unitClauses.remove(0);
+			if (unitClause.isSatisfied())
+				continue; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			Assignment unit = unitClause.getUnitAssignment();
 			TseitinVariableToken unitVar = unit.getVariable();
 			boolean unitValue = unit.getValue();
@@ -100,6 +95,7 @@ public class Dpll {
 			last.add(unitVar.getIndex());
 			infer(unit);
 		}
+		clauses.setUnitClauses(unitClauses);
 		return last;
 	}
 

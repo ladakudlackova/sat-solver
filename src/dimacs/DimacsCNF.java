@@ -95,13 +95,7 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	private void appendClauses(StringBuilder sb) {//, ArrayList<ArrayList<Assignment>> clauses) {
-		//ArrayList<List<Assignment>> clausesFromRoot = new ArrayList<List<Assignment>>(clauses);
-		//List<Assignment> rootClause = clausesFromRoot.remove(clausesFromRoot.size() - 1);
-		//clausesFromRoot.add(0, rootClause);
-		
-		//for (List<Assignment> clause : clausesFromRoot)
-		//	appendClause(sb, clause);
+	private void appendClauses(StringBuilder sb) {
 		Iterator<Clause> allClauses = clauses.getClauses();
 		while (allClauses.hasNext()) 
 			appendClause(sb, allClauses.next());

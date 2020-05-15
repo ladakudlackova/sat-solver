@@ -8,6 +8,7 @@ import java.util.List;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
+// TODO: unit clauses - satisfied
 
 public class Clauses {
 
@@ -27,9 +28,12 @@ public class Clauses {
 		return clausesSet.iterator();
 	}
 	
-	// TODO: use List as return type
-	public Iterator<Clause> getUnitClauses() {
-		return unitClausesSet.iterator();
+	public ArrayList<Clause> getUnitClauses() {
+		return new ArrayList<Clause>(unitClausesSet);
+	}
+	
+	public void setUnitClauses(ArrayList<Clause> unitClauses) {
+		unitClausesSet = new HashSet<Clause>(unitClauses);
 	}
 	
 	public void setValue(Assignment a) {
@@ -45,7 +49,7 @@ public class Clauses {
 				unsatisfiedCount--;
 			else if (clause.failed()) {
 				failed=true;
-				break;
+				continue;
 			}
 			if (clause.getUnassignedCount()==1 && !clause.isSatisfied())
 				unitClausesSet.add(clause);
@@ -59,6 +63,7 @@ public class Clauses {
 			TseitinVariableToken var=variables[i];
 			resetValue(var);
 		}
+		failed=false;
 	}
 	
 	public void resetValue(TseitinVariableToken var) {
@@ -68,7 +73,7 @@ public class Clauses {
 			clause.setValue(var, null);
 			if (wasSatisfied && !clause.isSatisfied())
 				unsatisfiedCount++;
-			if (clause.getUnassignedCount()==1) 
+			if (clause.getUnassignedCount()==1 && !clause.isSatisfied()) 
 				unitClausesSet.add(clause);
 			else if (clause.getUnassignedCount()==2) 
 				unitClausesSet.remove(clause);
@@ -105,5 +110,11 @@ public class Clauses {
 		failed=value;
 	}
 	
+	public void print() {
+		for (Object o: unitClausesSet.toArray()) {
+			Clause c=(Clause) o;
+			System.out.println(c);
+		}
+	}
 	
 }
