@@ -2,9 +2,6 @@ package dpll;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import dimacs.Clause;
-import dimacs.Clauses;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
@@ -22,18 +19,13 @@ public class Dpll {
 
 		this.variables = variables;
 		this.clauses=clauses;
-		this.clauses.createVariableClausesEdges(variables);
+		this.clauses.init(variables);
 		assignment=new Boolean[variables.length];
 	}
 	
 	protected Boolean[] solveClauses() {
 		
-		try {
-			solve();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		solve();
 		if (unsat)
 			return null;
 		for (int i=0;i<assignment.length;i++)

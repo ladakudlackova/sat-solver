@@ -1,49 +1,46 @@
 package dimacs;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import dpll.Clauses;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
-// TODO: unit clauses - satisfied
 
-public class Clauses {
+public class DimacsClauses extends Clauses{
 
-	private HashSet<Clause> clausesSet = new HashSet<Clause>();
-	private HashSet<Clause> unitClausesSet = new HashSet<Clause>();
-	private ArrayList<Clause>[] variableClausesEdges;
+	private HashSet<DimacsClause> clausesSet = new HashSet<DimacsClause>();
+	private HashSet<DimacsClause> unitClausesSet = new HashSet<DimacsClause>();
+	private ArrayList<DimacsClause>[] variableClausesEdges;
 	private boolean failed = false;	
 	private int unsatisfiedCount = 0;
 	
-	public void addClause(Clause c) {
+	public void addClause(DimacsClause c) {
 		clausesSet.add(c);
 	    unsatisfiedCount++;
 	}
 	
 	
-	public Iterator<Clause> getClauses() {
+	public Iterator<DimacsClause> getClauses() {
 		return clausesSet.iterator();
 	}
 	
-	public Clause getFirstUnitClause() {
-		Iterator<Clause> iterator = unitClausesSet.iterator();
+	public DimacsClause getFirstUnitClause() {
+		Iterator<DimacsClause> iterator = unitClausesSet.iterator();
 		if (iterator.hasNext())
 			return iterator.next();
 		return null;
-	}
-	
-	public void setUnitClauses(ArrayList<Clause> unitClauses) {
-		unitClausesSet = new HashSet<Clause>(unitClauses);
 	}
 	
 	public void setValue(Assignment a) {
 		TseitinVariableToken var=a.getVariable();
 		boolean value=a.getValue();
 		
-		for (Clause clause : variableClausesEdges[var.getIndex()]) {
+		for (DimacsClause clause : variableClausesEdges[var.getIndex()]) {
 			boolean wasSatisfied = clause.isSatisfied();
 			clause.setValue(var, value);
 			if (clause.getUnassignedCount()==0 )
@@ -72,7 +69,7 @@ public class Clauses {
 	
 	public void resetValue(TseitinVariableToken var) {
 		
-		for (Clause clause:variableClausesEdges[var.getIndex()]) {
+		for (DimacsClause clause:variableClausesEdges[var.getIndex()]) {
 			boolean wasSatisfied = clause.isSatisfied();
 			clause.setValue(var, null);
 			if (wasSatisfied && !clause.isSatisfied())
@@ -86,14 +83,14 @@ public class Clauses {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void createVariableClausesEdges(TseitinVariableToken[] variables) {
+	public void init(TseitinVariableToken[] variables) {
 		
 		variableClausesEdges= new ArrayList[variables.length+1];
 		for (int i=1;i<variables.length;i++) {
 			TseitinVariableToken var=variables[i];
-			variableClausesEdges[var.getIndex()] = new ArrayList<Clause>();
+			variableClausesEdges[var.getIndex()] = new ArrayList<DimacsClause>();
 		}
-		for (Clause clause : clausesSet) {
+		for (DimacsClause clause : clausesSet) {
 			for (TseitinVariableToken var : clause.getPosLiterals()) 
 				(variableClausesEdges[var.getIndex()]).add(clause);
 			for (TseitinVariableToken var : clause.getNegLiterals()) 
@@ -112,13 +109,6 @@ public class Clauses {
 	
 	public void setFailed(boolean value) {
 		failed=value;
-	}
-	
-	public void print() {
-		for (Object o: unitClausesSet.toArray()) {
-			Clause c=(Clause) o;
-			System.out.println(c);
-		}
 	}
 	
 }

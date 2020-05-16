@@ -4,10 +4,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import dpll.Clause;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
-public class Clause {
+public class DimacsClause extends Clause{
 
 	private HashSet<TseitinVariableToken> posLiterals = new HashSet<TseitinVariableToken>();
 	private HashSet<TseitinVariableToken> negLiterals = new HashSet<TseitinVariableToken>();
@@ -16,7 +17,7 @@ public class Clause {
 	private int unassignedCount = 0;
 	private int count;
 	
-	public Clause(Object[] clause, TseitinVariableToken[] variables) {
+	public DimacsClause(Object[] clause, TseitinVariableToken[] variables) {
 		for (Object literal : clause) {
 			addLiteral(literal, variables);
 		}
