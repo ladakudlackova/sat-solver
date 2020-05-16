@@ -7,8 +7,6 @@ import java.util.stream.Stream;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
-
-// error: unassignedCount
 public class Clause {
 
 	private HashSet<TseitinVariableToken> posLiterals = new HashSet<TseitinVariableToken>();

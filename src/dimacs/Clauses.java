@@ -28,8 +28,11 @@ public class Clauses {
 		return clausesSet.iterator();
 	}
 	
-	public ArrayList<Clause> getUnitClauses() {
-		return new ArrayList<Clause>(unitClausesSet);
+	public Clause getFirstUnitClause() {
+		Iterator<Clause> iterator = unitClausesSet.iterator();
+		if (iterator.hasNext())
+			return iterator.next();
+		return null;
 	}
 	
 	public void setUnitClauses(ArrayList<Clause> unitClauses) {
@@ -43,10 +46,11 @@ public class Clauses {
 		for (Clause clause : variableClausesEdges[var.getIndex()]) {
 			boolean wasSatisfied = clause.isSatisfied();
 			clause.setValue(var, value);
-			if (clause.getUnassignedCount()==0)
+			if (clause.getUnassignedCount()==0 )
 				unitClausesSet.remove(clause);
-			if (!wasSatisfied && clause.isSatisfied()) 
+			if (!wasSatisfied && clause.isSatisfied()) {
 				unsatisfiedCount--;
+			}
 			else if (clause.failed()) {
 				failed=true;
 				continue;

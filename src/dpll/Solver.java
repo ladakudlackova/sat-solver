@@ -76,7 +76,7 @@ public class Solver {
 		}
 		System.out.println(timeElapsed+" ms");
 		System.out.println("Number of decisions: "+decisionCount);
-		//System.out.println("Number of unit propagation steps: "+unitPropagationSteps);
+		System.out.println("Number of unit propagation steps: "+unitPropagationSteps);
 	}
 
 }

@@ -1,7 +1,6 @@
 package dpll;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import dimacs.Clause;
@@ -58,7 +57,7 @@ public class Dpll {
 		if (var == null) 
 			return;
 		last.add(var.getIndex());
-		decisionCount = decisionCount + 1;
+		decisionCount++;
 		decideAndSolve(var, true);
 		if (!unsat) 
 			return;
@@ -72,6 +71,7 @@ public class Dpll {
 	}
 	
 	private void decideAndSolve(TseitinVariableToken var, boolean value) {
+		
 		assignment[var.getIndex()] = value;
 		infer(new Assignment(var, value));
 		if (!unsat) 
@@ -81,21 +81,17 @@ public class Dpll {
 	private List<Integer> unitPropagation() {
 
 		List<Integer> last = new ArrayList<Integer>();
-		ArrayList<Clause> unitClauses=clauses.getUnitClauses();
-		while (!unsat && !unitClauses.isEmpty()) {  
-			Clause unitClause = unitClauses.remove(0);
-			if (unitClause.isSatisfied())
-				continue; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		Clause unitClause = clauses.getFirstUnitClause();
+		while (!unsat && unitClause!=null) {  
+			unitPropagationSteps++;
 			Assignment unit = unitClause.getUnitAssignment();
 			TseitinVariableToken unitVar = unit.getVariable();
 			boolean unitValue = unit.getValue();
-			if (assignment[unitVar.getIndex()]!=null)
-				continue;
 			assignment[unitVar.getIndex()] = unitValue;
 			last.add(unitVar.getIndex());
 			infer(unit);
+		    unitClause=clauses.getFirstUnitClause();
 		}
-		clauses.setUnitClauses(unitClauses);
 		return last;
 	}
 
@@ -117,10 +113,8 @@ public class Dpll {
 	}
 	
 	private void resetAssignment(List<Integer> last) {
-		for (Integer i : last) {
+		for (Integer i : last) 
 			assignment[i] = null;
-			
-		}
 		clauses.resetValues(last, variables);
 	}
 
