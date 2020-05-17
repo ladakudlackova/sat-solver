@@ -3,9 +3,13 @@ package dimacs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import dpll.Clause;
+import dpll.Clauses;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
+import watched_literals.ClausesWithWatches;
 
 
 
@@ -19,42 +23,53 @@ public class DimacsCNF {
 	private static final String NL = System.lineSeparator();
 	private static final int COMMENTS_LINE = 5;
 
-	private DimacsClauses clauses= new DimacsClauses();
+	private Clauses clauses;
 	private Collection<SimpleNNFVariableToken> nnfVars;
 	private TseitinVariableToken[] variables;
 	private int varsCount;
 	int rootVar;
 
-	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount) {
+	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount,
+			boolean watchedLiterals) {
 		
+		initClauses(watchedLiterals);
 		this.varsCount = varsCount;
 		variables=new TseitinVariableToken[varsCount+1];
 		for (int index = 1; index<=varsCount; index++) 
 			variables[index]=new TseitinVariableToken(index);
 		for (Integer[] intClause : intClauses) 
-			clauses.addClause(new DimacsClause(intClause, variables));	
+			clauses.addClause(intClause, variables);	
 	}
 
 	public DimacsCNF(Collection<Assignment[]> aClauses, Collection<SimpleNNFVariableToken> nnfVariables,
-			ArrayList<TseitinVariableToken> tseitinVars) {
+			ArrayList<TseitinVariableToken> tseitinVars, boolean watchedLiterals) {
 
+		initClauses(watchedLiterals);
 		tseitinVars.add(0, null);
 		variables = tseitinVars.toArray(new TseitinVariableToken[tseitinVars.size()]);
 		for (Assignment[] aClause : aClauses) 
-			clauses.addClause(new DimacsClause(aClause, variables));	
+			clauses.addClause(aClause, variables);	
 		this.nnfVars = nnfVariables;
 		this.varsCount = tseitinVars.size();
 		
 		rootVar = nnfVars.size() + 1;
 	}
 
+	private void initClauses(boolean watchedLiterals) {
+		
+		if (watchedLiterals)
+			clauses=new ClausesWithWatches();
+		else
+			clauses=new DimacsClauses();
+	}
 	
 	@Override
 	public String toString() {
+		
 		StringBuilder sb = new StringBuilder();
 		appendComments(sb, nnfVars);
 		appendHeader(sb);
-		appendClauses(sb);
+		appendDimacsClauses(sb);
 		return sb.toString();
 	}
 
@@ -95,14 +110,14 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	private void appendClauses(StringBuilder sb) {
-		Iterator<DimacsClause> allClauses = clauses.getClauses();
+	private void appendDimacsClauses(StringBuilder sb) {
+		Iterator<DimacsClause> allClauses = ((DimacsClauses)clauses).getAllClauses();
 		while (allClauses.hasNext()) 
-			appendClause(sb, allClauses.next());
+			appendDimacsClause(sb, (DimacsClause)allClauses.next());
 		
 	}
 
-	private void appendClause(StringBuilder sb, DimacsClause clause) {
+	private void appendDimacsClause(StringBuilder sb, DimacsClause clause) {
 		for (TseitinVariableToken var : clause.getPosLiterals()) {
 			sb.append(var.getIndex());
 			sb.append(" ");
@@ -116,7 +131,7 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	public DimacsClauses getClauses() {
+	public Clauses getClauses() {
 		return clauses;
 	}
 

@@ -17,15 +17,15 @@ public class Solver {
 	private static final String UNSAT = "UNSAT";
 
 	public static void main(String[] args) {
-		solve(args[0]);
+		solve(args[0], false);
 	}
 
-	public static Boolean[] solve(String inputFileName) {
+	public static Boolean[] solve(String inputFileName, boolean watchedLiterals) {
 
 		long start = System.currentTimeMillis();
-		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName);
+		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName, watchedLiterals);
 		if (dimacsCNF != null) {
-			DimacsClauses clauses = dimacsCNF.getClauses();
+			Clauses clauses = dimacsCNF.getClauses();
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
 			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
@@ -36,12 +36,12 @@ public class Solver {
 		return null;
 	}
 
-	private static DimacsCNF createDimacsCNF(String inputFileName) {
+	private static DimacsCNF createDimacsCNF(String inputFileName, boolean watchedLiterals) {
 
 		if (inputFileName.endsWith(DIMACS_EXT))
-			return DimacsFileUtils.processDimacsFile(inputFileName);
+			return DimacsFileUtils.processDimacsFile(inputFileName, watchedLiterals);
 		if (inputFileName.endsWith(SMT_LIB))
-			return Translation.formula2dimacsCNF(false, inputFileName);
+			return Translation.formula2dimacsCNF(false, inputFileName, watchedLiterals);
 		return null;
 	}
 

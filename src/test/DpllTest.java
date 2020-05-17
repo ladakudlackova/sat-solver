@@ -23,17 +23,17 @@ public class DpllTest {
 	@Test
 	public void testSolver() {       
 		
-		testSolverInputFiles(SAT_CNF_FOLDER.toFile(), true);
-		testSolverInputFiles(UNSAT_CNF_FOLDER.toFile(), false);
+		testSolverInputFiles(SAT_CNF_FOLDER.toFile(), true, false);
+		testSolverInputFiles(UNSAT_CNF_FOLDER.toFile(), false, false);
 		
 	}
 	
-	private void testSolverInputFiles(File folder, Boolean sat) {
+	private void testSolverInputFiles(File folder, Boolean sat, boolean watchedLiterals) {
 		for (final File fileEntry : folder.listFiles()) {
 			try {
 				if (fileEntry.isFile()) {
 					String inputFileName = fileEntry.getPath();
-					Boolean[] assignment = Solver.solve(inputFileName);
+					Boolean[] assignment = Solver.solve(inputFileName, watchedLiterals);
 					if (sat)
 						assertNotNull(assignment);
 					else

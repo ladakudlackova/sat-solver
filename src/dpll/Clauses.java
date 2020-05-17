@@ -21,6 +21,10 @@ public abstract class Clauses {
 
 	protected abstract Clause getFirstUnitClause();
 
-	protected abstract int getUnsatisfiedCount();
+	public abstract int getUnsatisfiedCount();
+
+	public abstract void addClause(Object[] intClause, TseitinVariableToken[] variables);
+
+	
 
 }

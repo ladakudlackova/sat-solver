@@ -55,20 +55,11 @@ public class DimacsClause extends Clause{
 			failedVariables.add(var);
 	}	
 	
-	private void addLiteral(Object literal, TseitinVariableToken[] variables) {
+	protected void addLiteral(Object literal, TseitinVariableToken[] variables) {
 		
-		TseitinVariableToken var=null;
-		Boolean value=null;
-		if (literal instanceof Assignment) {
-			Assignment a = ((Assignment)literal);
-			var=a.getVariable();
-			value=a.getValue();
-		}
-		else if (literal instanceof Integer){
-			Integer a = ((Integer)literal);
-			value = a>0;
-			var=variables[Math.abs(a)];
-		}
+		Assignment a = new Assignment(literal, variables);
+		TseitinVariableToken var= a.getVariable();
+		Boolean value=a.getValue();
 		if (value)
 			posLiterals.add(var);
 		else

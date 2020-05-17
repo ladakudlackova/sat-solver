@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import dpll.Clause;
 import dpll.Clauses;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
@@ -19,16 +20,34 @@ public class DimacsClauses extends Clauses{
 	private boolean failed = false;	
 	private int unsatisfiedCount = 0;
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void init(TseitinVariableToken[] variables) {
+		
+		variableClausesEdges= new ArrayList[variables.length+1];
+		for (int i=1;i<variables.length;i++) {
+			TseitinVariableToken var=variables[i];
+			variableClausesEdges[var.getIndex()] = new ArrayList<DimacsClause>();
+		}
+		for (DimacsClause clause : clausesSet) {
+			for (TseitinVariableToken var : clause.getPosLiterals()) 
+				(variableClausesEdges[var.getIndex()]).add(clause);
+			for (TseitinVariableToken var : clause.getNegLiterals()) 
+				(variableClausesEdges[var.getIndex()]).add(clause);
+		}
+	}
+	
 	public void addClause(DimacsClause c) {
 		clausesSet.add(c);
 	    unsatisfiedCount++;
+	}	
+	
+	@Override
+	public void addClause(Object[] clause, TseitinVariableToken[] variables) {
+		addClause(new DimacsClause(clause, variables));
 	}
 	
-	
-	public Iterator<DimacsClause> getClauses() {
-		return clausesSet.iterator();
-	}
-	
+	@Override
 	public DimacsClause getFirstUnitClause() {
 		Iterator<DimacsClause> iterator = unitClausesSet.iterator();
 		if (iterator.hasNext())
@@ -36,6 +55,7 @@ public class DimacsClauses extends Clauses{
 		return null;
 	}
 	
+	@Override
 	public void setValue(Assignment a) {
 		TseitinVariableToken var=a.getVariable();
 		boolean value=a.getValue();
@@ -58,6 +78,7 @@ public class DimacsClauses extends Clauses{
 		var.setValue(value);
 	}
 	
+	@Override
 	public void resetValues(List<Integer> last, TseitinVariableToken[] variables) {
 		
 		for (Integer i : last) {
@@ -67,6 +88,7 @@ public class DimacsClauses extends Clauses{
 		failed=false;
 	}
 	
+	@Override
 	public void resetValue(TseitinVariableToken var) {
 		
 		for (DimacsClause clause:variableClausesEdges[var.getIndex()]) {
@@ -81,34 +103,26 @@ public class DimacsClauses extends Clauses{
 		}
 		var.setValue(null);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void init(TseitinVariableToken[] variables) {
-		
-		variableClausesEdges= new ArrayList[variables.length+1];
-		for (int i=1;i<variables.length;i++) {
-			TseitinVariableToken var=variables[i];
-			variableClausesEdges[var.getIndex()] = new ArrayList<DimacsClause>();
-		}
-		for (DimacsClause clause : clausesSet) {
-			for (TseitinVariableToken var : clause.getPosLiterals()) 
-				(variableClausesEdges[var.getIndex()]).add(clause);
-			for (TseitinVariableToken var : clause.getNegLiterals()) 
-				(variableClausesEdges[var.getIndex()]).add(clause);
-		}
-	}
 
+	@Override
 	public int getUnsatisfiedCount() {
 		return unsatisfiedCount;
 	}
 
 
+	@Override
 	public boolean failed() {
 		return failed;
 	}
 	
+	@Override
 	public void setFailed(boolean value) {
 		failed=value;
 	}
+
+	public Iterator<DimacsClause> getAllClauses() {
+		return clausesSet.iterator();
+	}
+	
 	
 }

@@ -14,11 +14,11 @@ public class DimacsFileUtils {
 
 	private static final String INVALID_DIMACS_FILE	= "Invalid dimacs file.";
 	
-	public static DimacsCNF processDimacsFile(String inputFileName) {
+	public static DimacsCNF processDimacsFile(String inputFileName, boolean watchedLiterals) {
 		FileReader inputFReader = IOUtils.createReader(inputFileName);
 		if (inputFReader!=null) {
 			BufferedReader inputBReader = new BufferedReader(inputFReader);			
-			return processDimacsReader(inputBReader);
+			return processDimacsReader(inputBReader, watchedLiterals);
 		}
 		return null;
 	}
@@ -28,8 +28,8 @@ public class DimacsFileUtils {
 		return processClauses(dimacsReader);
 	}
 	
-	private static DimacsCNF processDimacsReader(BufferedReader clausesReader) {	
-		DimacsCNF dimacsCNF = createDimacsCNF(clausesReader);
+	private static DimacsCNF processDimacsReader(BufferedReader clausesReader, boolean watchedLiterals) {	
+		DimacsCNF dimacsCNF = createDimacsCNF(clausesReader, watchedLiterals);
 		if (dimacsCNF==null)
 			IOUtils.reportError(INVALID_DIMACS_FILE);
 		IOUtils.closeReader(clausesReader);
@@ -37,13 +37,13 @@ public class DimacsFileUtils {
 	}
 	
 	
-	private static DimacsCNF createDimacsCNF(BufferedReader dimacsReader) {
+	private static DimacsCNF createDimacsCNF(BufferedReader dimacsReader, boolean watchedLiterals) {
 
 		int varsCount =processHeader(dimacsReader);
 		List<Integer[]> clauses = null;
 		if (varsCount>-1)
 			clauses = processClauses(dimacsReader);
-		return new DimacsCNF(clauses, varsCount);
+		return new DimacsCNF(clauses, varsCount, watchedLiterals);
 	}
 	
 	private static int processHeader(BufferedReader dimacsReader) {

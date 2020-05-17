@@ -12,6 +12,19 @@ public class Assignment {
 		this.value=value;
 	}
 	
+	public Assignment(Object literal, TseitinVariableToken[] variables) {
+		if (literal instanceof Assignment) {
+			Assignment a = (Assignment)literal;
+			var=a.getVariable();
+			value=a.getValue();
+		}
+		else if (literal instanceof Integer){
+			Integer a = ((Integer)literal);
+			value = a>0;
+			var=variables[Math.abs(a)];
+		}
+	}
+	
 	public TseitinVariableToken getVariable() {
 		return var;
 	}
