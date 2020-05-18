@@ -3,7 +3,7 @@ package watched_literals;
 import java.util.ArrayList;
 import java.util.List;
 
-import tseitin.TseitinVariableToken;
+import tseitin.Assignment;
 
 public class WatchedLiterals {
 
@@ -30,12 +30,19 @@ public class WatchedLiterals {
 	private void addWatchedLiterals(List<ClauseWithWatches> clausesList) {
 		
 		for (ClauseWithWatches c : clausesList) {
-			addWatchedLiteral(c.getWatchedLiteral(0));
-			addWatchedLiteral(c.getWatchedLiteral(1));
+			addWatchedLiteral(c.addWatchedLiteral(0));
+			addWatchedLiteral(c.addWatchedLiteral(1));
 		}
 	}
 	
-	private void addWatchedLiteral(WatchedLiteral lit) {
+	protected List<WatchedLiteral> getOppositeLiterals(Assignment a){
+		
+		if (a.getValue())
+			return negativeLiterals[a.getVariable().getIndex()];
+		return positiveLiterals[a.getVariable().getIndex()];
+	}
+	
+	protected void addWatchedLiteral(WatchedLiteral lit) {
 		
 		int varIndex = lit.getVariable().getIndex();
 		if (lit.getValue())
@@ -43,4 +50,15 @@ public class WatchedLiterals {
 		else
 			negativeLiterals[varIndex].add(lit);
 	}
+	
+	protected void removeWatchedLiteral(boolean value, int varIndex, int index){
+		
+		List<WatchedLiteral> literals;
+		if (value)
+			literals = positiveLiterals[varIndex];
+		else
+			literals = negativeLiterals[varIndex];
+		literals.remove(index);
+	}
+	
 }

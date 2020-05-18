@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import dpll.Clause;
 import dpll.Clauses;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
@@ -17,8 +16,6 @@ public class DimacsClauses extends Clauses{
 	private HashSet<DimacsClause> clausesSet = new HashSet<DimacsClause>();
 	private HashSet<DimacsClause> unitClausesSet = new HashSet<DimacsClause>();
 	private ArrayList<DimacsClause>[] variableClausesEdges;
-	private boolean failed = false;	
-	private int unsatisfiedCount = 0;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -56,14 +53,12 @@ public class DimacsClauses extends Clauses{
 	}
 	
 	@Override
-	public void setValue(Assignment a) {
-		TseitinVariableToken var=a.getVariable();
-		boolean value=a.getValue();
+	public void updateClauses(Assignment a){
 		
-		for (DimacsClause clause : variableClausesEdges[var.getIndex()]) {
+		for (DimacsClause clause : variableClausesEdges[a.getVariable().getIndex()]) {
 			boolean wasSatisfied = clause.isSatisfied();
-			clause.setValue(var, value);
-			if (clause.getUnassignedCount()==0 )
+			clause.setValue(a.getVariable(), a.getValue());
+			if (clause.getUnassignedCount()==0)
 				unitClausesSet.remove(clause);
 			if (!wasSatisfied && clause.isSatisfied()) {
 				unsatisfiedCount--;
@@ -75,7 +70,6 @@ public class DimacsClauses extends Clauses{
 			if (clause.getUnassignedCount()==1 && !clause.isSatisfied())
 				unitClausesSet.add(clause);
 		}
-		var.setValue(value);
 	}
 	
 	@Override
@@ -104,21 +98,6 @@ public class DimacsClauses extends Clauses{
 		var.setValue(null);
 	}
 
-	@Override
-	public int getUnsatisfiedCount() {
-		return unsatisfiedCount;
-	}
-
-
-	@Override
-	public boolean failed() {
-		return failed;
-	}
-	
-	@Override
-	public void setFailed(boolean value) {
-		failed=value;
-	}
 
 	public Iterator<DimacsClause> getAllClauses() {
 		return clausesSet.iterator();

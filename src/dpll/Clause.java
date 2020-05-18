@@ -9,4 +9,7 @@ public abstract class Clause {
 	
 	protected abstract Assignment getUnitAssignment();
 
+	public abstract boolean isSatisfied();
+	
+	public abstract boolean failed();
 }

@@ -22,36 +22,6 @@ public class ClausesWithWatches extends Clauses{
 	}
 
 	@Override
-	protected void setValue(Assignment a) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void resetValue(TseitinVariableToken var) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resetValues(List<Integer> last, TseitinVariableToken[] variables) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected boolean failed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected void setFailed(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	protected Clause getFirstUnitClause() {
 		
 		if (unitClausesList.isEmpty())
@@ -60,20 +30,62 @@ public class ClausesWithWatches extends Clauses{
 	}
 
 	@Override
-	public int getUnsatisfiedCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
 	public void addClause(Object[] intClause, TseitinVariableToken[] variables) {
 		
+		unsatisfiedCount++;
 		ClauseWithWatches c = new ClauseWithWatches(intClause, variables);
-		if (c.isUnit)
+		if (c.isUnit())
 			unitClausesList.add(c);
 		else
 			clausesList.add(c);
+		
+	}
+
+	@Override
+	public void updateClauses(Assignment a) {
+		
+		List<WatchedLiteral> literals = variablesWatchedLiterals.getOppositeLiterals(a);
+		int size = literals.size();
+		int lastSatisfied=0;
+		for (int i=0;i<size;i++) {			
+			WatchedLiteral lit = literals.get(i);
+			boolean litValue = lit.getValue();
+			int litVarIndex = lit.getVariable().getIndex();
+			ClauseWithWatches clause = lit.getClause();
+			boolean wasUnit = clause.isUnit();
+			boolean wasSatisfied = clause.isSatisfied();
+			clause.updateWatchedLiteral(lit);  //           !!!!!
+			if (clause.failed()) {
+				failed=true;
+				return;
+			}
+			if (!(litVarIndex==lit.getVariable().getIndex())) {
+				variablesWatchedLiterals.removeWatchedLiteral(litValue, litVarIndex, i);
+				variablesWatchedLiterals.addWatchedLiteral(lit);
+			}
+			if (clause.isUnit()) {
+				if (!wasUnit && !clause.isSatisfied())
+					unitClausesList.add(clause);
+			}
+			else {
+				if (wasUnit)
+					unitClausesList.remove(clause);
+			}
+			
+			if (!wasSatisfied && clause.isSatisfied()) {
+				lastSatisfied++;
+			}
+		}
+		unsatisfiedCount=unsatisfiedCount-lastSatisfied;
+	}
+
+	@Override
+	public void resetValues(List<Integer> last, TseitinVariableToken[] variables) {
+		failed=false;
+	}
+
+	@Override
+	public void resetValue(TseitinVariableToken var) {
 		
 	}
 

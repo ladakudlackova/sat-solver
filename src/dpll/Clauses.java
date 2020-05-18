@@ -6,25 +6,44 @@ import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
 public abstract class Clauses {
+	
+	protected int unsatisfiedCount = 0;
+	
+	protected boolean failed = false;	
 
 	protected abstract void init(TseitinVariableToken[] variables);
-
-	protected abstract void setValue(Assignment a);
 	
-	protected abstract void resetValue(TseitinVariableToken var);
-	
-	protected abstract void resetValues(List<Integer> last, TseitinVariableToken[] variables);
-	
-	protected abstract boolean failed();
-
-	protected abstract void setFailed(boolean b);
-
 	protected abstract Clause getFirstUnitClause();
 
-	public abstract int getUnsatisfiedCount();
-
 	public abstract void addClause(Object[] intClause, TseitinVariableToken[] variables);
+	
+	public abstract void updateClauses(Assignment a);
+	
+	public abstract void resetValues(List<Integer> last, TseitinVariableToken[] variables);
+	
+	public abstract void resetValue(TseitinVariableToken var);
+
+	public int getUnsatisfiedCount() {
+		return unsatisfiedCount;
+	}
+	
+	public void setValue(Assignment a) {
+		
+		TseitinVariableToken var=a.getVariable();
+		boolean value=a.getValue();
+		updateClauses(a);
+		var.setValue(value);
+	}
+
+	public boolean failed() {
+		return failed;
+	}
+
+	public void setFailed(boolean b) {
+		failed = b;
+	}
 
 	
 
 }
+

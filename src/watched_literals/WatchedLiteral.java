@@ -16,13 +16,30 @@ public class WatchedLiteral {
 		index = i;
 	}
 	
+	
+	
 	protected TseitinVariableToken getVariable() {
-		
 		return literal.getVariable();
 	}
 	
 	protected Boolean getValue() {
-		
 		return literal.getValue();
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public ClauseWithWatches getClause() {
+		return clause;
+	}
+	
+	@Override
+	public boolean equals(Object other) { 
+		
+		if (other instanceof WatchedLiteral) 
+			if (index==((WatchedLiteral)other).index)
+				return true;  		// index in same clause
+		return false;
 	}
 }
