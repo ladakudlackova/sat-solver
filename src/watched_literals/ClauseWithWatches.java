@@ -11,32 +11,31 @@ public class ClauseWithWatches extends Clause{
 
 	private List<Assignment> literals = new ArrayList<Assignment>();
 	private WatchedLiteral[] watchedLiterals= new WatchedLiteral[2];
-	private boolean isUnit = false;
 	private boolean failed = false;
 	
 	public ClauseWithWatches(Object[] clause, TseitinVariableToken[] variables) {
 		
 		for (Object literal : clause) 
 			addLiteral(literal, variables);
-		if (clause.length==1) 
-			isUnit=true;
-		
 	}
 	
 	@Override
-	protected void addLiteral(Object literal, TseitinVariableToken[] variables) {
+	protected void addLiteral(Object literal, TseitinVariableToken[] variables) {           
 		
 		Assignment a = new Assignment(literal, variables);
 		literals.add(a);
-	}
+	}  
 
 	@Override
 	protected Assignment getUnitAssignment() {
-		// TODO Auto-generated method stub
+
+		for (int i=0;i<watchedLiterals.length;i++) 
+			if (watchedLiterals[i].getVariableValue()==null)
+				return watchedLiterals[i].getLiteral();
 		return null;
 	}
 	
-	public WatchedLiteral addWatchedLiteral(int index) {
+	public WatchedLiteral addWatchedLiteral(int index) {         
 		
 		if (0<=index && index<watchedLiterals.length) {
 			WatchedLiteral lit = new WatchedLiteral(literals.get(index), this, index);
@@ -46,24 +45,34 @@ public class ClauseWithWatches extends Clause{
 		return null;
 	}
 	
-	protected void updateWatchedLiteral(WatchedLiteral watchedLit) {
+	protected WatchedLiteral updateWatchedLiteral(int index) {
 		
-		WatchedLiteral other=watchedLiterals[0];
-		if (other.equals(watchedLit))
-			other=watchedLiterals[1];
-		Boolean otherSatisfied = other.getValue()==other.getVariable().getValue();
-		if (isUnit && !otherSatisfied) {
-			failed=true;
-			return;
-		}
-	    WatchedLiteral freeLit = getFreeLiteral();
-		if (freeLit==null) {
-			if (!otherSatisfied && other.getValue()==null)
-				isUnit=true;
+		WatchedLiteral watchedLit;		
+		WatchedLiteral otherWatchedLit;			
+		if (index==watchedLiterals[0].getIndex()) {
+			watchedLit=watchedLiterals[0];
+			otherWatchedLit=watchedLiterals[1];
 		}
 		else {
-			watchedLit=freeLit;
+			watchedLit=watchedLiterals[1];
+			otherWatchedLit=watchedLiterals[0];
 		}
+		return updateWatchedLiteral(watchedLit, otherWatchedLit);
+	}
+	
+	private WatchedLiteral updateWatchedLiteral(
+							WatchedLiteral watchedLit,
+							WatchedLiteral otherWatchedLit){
+		
+		if (isUnit() && !otherWatchedLit.isSatisfied()) {
+			failed=true;
+			return watchedLit;
+		}
+	    WatchedLiteral freeLit = getFreeLiteral();
+	    if (freeLit!=null) 
+	    	watchedLit.update(freeLit);
+		return watchedLit;
+		
 	}
 	
 	private WatchedLiteral getFreeLiteral() {
@@ -81,19 +90,49 @@ public class ClauseWithWatches extends Clause{
 		return null;
 	}
 	
-	protected boolean isUnit() {		
-		return isUnit;
+	protected boolean isUnit() {
+		
+		if (isSatisfied())
+			return false;
+		if (watchedLiterals[0].getVariableValue()==null) {
+				if (watchedLiterals[1].getVariableValue()!=null) 
+					return true;
+		}
+		else if (watchedLiterals[1].getVariableValue()==null)
+			return true;
+		return false;
 	}
 
+	protected boolean isNewUnit() {	
+		
+		if (isSatisfied())
+			return false;
+		if (watchedLiterals[0].getVariableValue()==null 
+				&& watchedLiterals[1].getVariableValue()==null) {
+				return true;
+		}
+		return false;
+	}
+
+	
 	@Override
 	public boolean isSatisfied() {
-		// TODO Auto-generated method stub
-		return false;
+		
+		return (watchedLiterals[0].isSatisfied()||watchedLiterals[1].isSatisfied());
+	/*	for (Assignment a:literals)
+			if (a.getValue()==a.getVariable().getValue()) {
+				return true;
+			}
+		return false;*/
 	}
 
 	@Override
 	public boolean failed() {
 		return failed;
+	}
+
+	public void setFailed(boolean failed) {
+		this.failed=failed;
 	}
 	
 }

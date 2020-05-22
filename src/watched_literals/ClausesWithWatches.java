@@ -14,7 +14,6 @@ public class ClausesWithWatches extends Clauses{
 	private List<ClauseWithWatches> unitClausesList = new ArrayList<ClauseWithWatches>();
 	private WatchedLiterals variablesWatchedLiterals;
 	
-	
 	@Override
 	protected void init(TseitinVariableToken[] variables) {
 		
@@ -22,71 +21,77 @@ public class ClausesWithWatches extends Clauses{
 	}
 
 	@Override
-	protected Clause getFirstUnitClause() {
-		
-		if (unitClausesList.isEmpty())
-			return null;
-		return unitClausesList.get(0);
-	}
-
-	@Override
 	public void addClause(Object[] intClause, TseitinVariableToken[] variables) {
 		
-		unsatisfiedCount++;
 		ClauseWithWatches c = new ClauseWithWatches(intClause, variables);
-		if (c.isUnit())
+		if (intClause.length==1)     
 			unitClausesList.add(c);
 		else
 			clausesList.add(c);
 		
 	}
+	
+	@Override
+	protected Clause getFirstUnitClause() {
+		
+		while (!unitClausesList.isEmpty()) {
+			ClauseWithWatches firstUnit = unitClausesList.remove(0);
+			if (firstUnit.isUnit())
+				return firstUnit;
+		}
+		return null;
+	}
 
 	@Override
 	public void updateClauses(Assignment a) {
 		
-		List<WatchedLiteral> literals = variablesWatchedLiterals.getOppositeLiterals(a);
-		int size = literals.size();
-		int lastSatisfied=0;
+		List<WatchedLiteral> literals = variablesWatchedLiterals.getLiteralsByValue(a, !a.getValue());
+		int size = literals.size(); 
 		for (int i=0;i<size;i++) {			
-			WatchedLiteral lit = literals.get(i);
+			WatchedLiteral lit = literals.get(i);	
 			boolean litValue = lit.getValue();
+			int litIndex = lit.getIndex();
 			int litVarIndex = lit.getVariable().getIndex();
 			ClauseWithWatches clause = lit.getClause();
-			boolean wasUnit = clause.isUnit();
-			boolean wasSatisfied = clause.isSatisfied();
-			clause.updateWatchedLiteral(lit);  //           !!!!!
-			if (clause.failed()) {
-				failed=true;
-				return;
+			lit=clause.updateWatchedLiteral(litIndex);  
+			if (clause.failed()) { 
+				failed=true;		
+				clause.setFailed(false);
+				break;
 			}
-			if (!(litVarIndex==lit.getVariable().getIndex())) {
-				variablesWatchedLiterals.removeWatchedLiteral(litValue, litVarIndex, i);
+			if (!(litIndex==lit.getIndex())) {
+				variablesWatchedLiterals.removeWatchedLiteral(litValue, litVarIndex, i); 
 				variablesWatchedLiterals.addWatchedLiteral(lit);
+				size--;
+				i--;
 			}
-			if (clause.isUnit()) {
-				if (!wasUnit && !clause.isSatisfied())
-					unitClausesList.add(clause);
-			}
-			else {
-				if (wasUnit)
-					unitClausesList.remove(clause);
-			}
-			
-			if (!wasSatisfied && clause.isSatisfied()) {
-				lastSatisfied++;
-			}
+			if (clause.isNewUnit()) 
+				unitClausesList.add(clause);
 		}
-		unsatisfiedCount=unsatisfiedCount-lastSatisfied;
 	}
 
-	@Override
+	@Override	
 	public void resetValues(List<Integer> last, TseitinVariableToken[] variables) {
+		
 		failed=false;
+		for (Integer varIndex:last) 
+			resetValue(variables[varIndex]);
+			
 	}
 
 	@Override
-	public void resetValue(TseitinVariableToken var) {
+	public void resetValue(TseitinVariableToken var) {   
 		
+		var.setValue(null);
 	}
 
+	@Override
+	public boolean allSatisfied() {
+		
+		for (ClauseWithWatches c:clausesList)
+			if (!c.isSatisfied()) 
+				return false;
+		return true;
+	}
+	
 }

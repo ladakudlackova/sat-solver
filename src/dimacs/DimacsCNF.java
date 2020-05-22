@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import dpll.Clause;
 import dpll.Clauses;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.Assignment;
@@ -27,13 +26,15 @@ public class DimacsCNF {
 	private Collection<SimpleNNFVariableToken> nnfVars;
 	private TseitinVariableToken[] variables;
 	private int varsCount;
+	private int clausesCount;
 	int rootVar;
 
 	public DimacsCNF(Collection<Integer[]> intClauses, int varsCount,
-			boolean watchedLiterals) {
+			boolean withWatchedLiterals) {
 		
-		initClauses(watchedLiterals);
+		initClauses(withWatchedLiterals);
 		this.varsCount = varsCount;
+		clausesCount = intClauses.size();
 		variables=new TseitinVariableToken[varsCount+1];
 		for (int index = 1; index<=varsCount; index++) 
 			variables[index]=new TseitinVariableToken(index);
@@ -51,7 +52,7 @@ public class DimacsCNF {
 			clauses.addClause(aClause, variables);	
 		this.nnfVars = nnfVariables;
 		this.varsCount = tseitinVars.size();
-		
+		clausesCount = aClauses.size();
 		rootVar = nnfVars.size() + 1;
 	}
 
@@ -106,7 +107,7 @@ public class DimacsCNF {
 		sb.append(HEADER);
 		sb.append(varsCount);
 		sb.append(" ");
-		sb.append(clauses.getUnsatisfiedCount());
+		sb.append(clausesCount);
 		sb.append(NL);
 	}
 

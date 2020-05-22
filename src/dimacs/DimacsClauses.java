@@ -16,6 +16,7 @@ public class DimacsClauses extends Clauses{
 	private HashSet<DimacsClause> clausesSet = new HashSet<DimacsClause>();
 	private HashSet<DimacsClause> unitClausesSet = new HashSet<DimacsClause>();
 	private ArrayList<DimacsClause>[] variableClausesEdges;
+	protected int unsatisfiedCount = 0;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -101,6 +102,11 @@ public class DimacsClauses extends Clauses{
 
 	public Iterator<DimacsClause> getAllClauses() {
 		return clausesSet.iterator();
+	}
+
+	@Override
+	public boolean allSatisfied() {
+		return unsatisfiedCount==0;
 	}
 	
 	

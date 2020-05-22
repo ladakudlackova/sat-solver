@@ -36,7 +36,7 @@ public class Assignment {
 	@Override
 	public String toString() {
 		if (value)
-			return var.getToken()+" ";
-		return NEG+var.getToken()+" ";
+			return var.getIndex()+" ";
+		return NEG+var.getIndex()+" ";
 	}
 }

@@ -35,30 +35,30 @@ public class WatchedLiterals {
 		}
 	}
 	
-	protected List<WatchedLiteral> getOppositeLiterals(Assignment a){
-		
-		if (a.getValue())
-			return negativeLiterals[a.getVariable().getIndex()];
-		return positiveLiterals[a.getVariable().getIndex()];
-	}
-	
 	protected void addWatchedLiteral(WatchedLiteral lit) {
 		
-		int varIndex = lit.getVariable().getIndex();
-		if (lit.getValue())
-			positiveLiterals[varIndex].add(lit);
-		else
-			negativeLiterals[varIndex].add(lit);
+		getLiteralsByValue(lit.getVariable().getIndex(), lit.getValue())
+			.add(lit);
 	}
 	
 	protected void removeWatchedLiteral(boolean value, int varIndex, int index){
 		
-		List<WatchedLiteral> literals;
-		if (value)
-			literals = positiveLiterals[varIndex];
-		else
-			literals = negativeLiterals[varIndex];
-		literals.remove(index);
+		getLiteralsByValue(varIndex, value).remove(index);
 	}
+
+	protected List<WatchedLiteral> getLiteralsByValue(Assignment a, Boolean value){
+		
+		return getLiteralsByValue(a.getVariable().getIndex(), value);
+	}
+	
+	private List<WatchedLiteral> getLiteralsByValue(int index, Boolean value){
+		
+		if (value)
+			return positiveLiterals[index];
+		return negativeLiterals[index];
+	}
+	
+
+	
 	
 }

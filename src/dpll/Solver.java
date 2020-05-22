@@ -2,7 +2,7 @@ package dpll;
 
 import java.util.Collection;
 
-import dimacs.DimacsClauses;
+
 import dimacs.DimacsCNF;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.TseitinVariableToken;
@@ -15,6 +15,7 @@ public class Solver {
 	private static final String SMT_LIB = ".sat";
 	private static final String SAT = "SAT";
 	private static final String UNSAT = "UNSAT";
+	private static long totalTimeElapsed = 0;
 
 	public static void main(String[] args) {
 		solve(args[0], false);
@@ -62,6 +63,9 @@ public class Solver {
 		System.out.println(timeElapsed + " ms");
 		System.out.println("Number of decisions: " + decisionCount);
 		System.out.println("Number of unit propagation steps: " + unitPropagationSteps + "\n");
+		
+		totalTimeElapsed=totalTimeElapsed+timeElapsed;
+		//System.out.println("TOT: " + totalTimeElapsed);
 	}
 
 	private static void printAssignment(Boolean[] assignment) {

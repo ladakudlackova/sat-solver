@@ -16,7 +16,9 @@ public class WatchedLiteral {
 		index = i;
 	}
 	
-	
+	protected Assignment getLiteral() {
+		return literal;
+	}
 	
 	protected TseitinVariableToken getVariable() {
 		return literal.getVariable();
@@ -25,6 +27,10 @@ public class WatchedLiteral {
 	protected Boolean getValue() {
 		return literal.getValue();
 	}
+	
+	protected Boolean getVariableValue() {
+		return literal.getVariable().getValue();
+	}
 
 	public int getIndex() {
 		return index;
@@ -32,6 +38,15 @@ public class WatchedLiteral {
 
 	public ClauseWithWatches getClause() {
 		return clause;
+	}
+	
+	protected boolean isSatisfied() {
+		return getValue()==getVariable().getValue();
+	}
+	
+	protected void update(WatchedLiteral lit) {
+		literal = lit.literal;
+		index = lit.index;
 	}
 	
 	@Override
