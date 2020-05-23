@@ -3,77 +3,105 @@ package utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-
-import dpll.Solver;
+import java.util.Set;
 
 public class Report {
 
-	private Path inputFolderPath = Paths.get("src", "test", "data", "input",  "task_3");
-	private Path outputFilePath = Paths.get("src", "test", "data", "output", "task_3", "report.txt");
+	private static final String AVG_VALUES = "Average values";
+	private static final String[] ALGS 	= new String[]{" -DPLL:", " -DPLL with watched literals:"};
+	private static final String VARIABLES	= "variables:";	
+	private static final String CLAUSES 	= "clauses:";
+	private static final String TIME 		= "time [ms]:";
+	private static final String DECISIONS 	= "decisions:";
+	private static final String UP_STEPS 	= "UP steps:";
 	
-	private Map<Integer,RunInfo> totalRunInfo = new HashMap<>();
 	
 	
-	public static void main(String[] args) {
+	@SuppressWarnings("unchecked")
+	private Map<Integer,RunInfo>[] totalRunInfo = new HashMap[2]; 
+
+	
+	public Report() {
 		
-		Report report = new Report(args);
-		report.runAll();
-		report.print();
+		totalRunInfo[0]=new HashMap<Integer, RunInfo>();	// DPLL
+		totalRunInfo[1]=new HashMap<Integer, RunInfo>();	// DPLL with watched literals
 	}
 	
-	
-	public Report(String[] args) {
-		
-		if (args!=null) {
-			if (args.length>0) {
-				inputFolderPath =  Paths.get(args[0]);
-				if (args.length>1)
-					outputFilePath =  Paths.get(args[1]);
-			}
-		}
-	}
-	
-	private void runAll() {
-		
-		File inputFolder = inputFolderPath.toFile();
-		for (final File inputFile : inputFolder.listFiles()) {
-			run(inputFile, true);
-			run(inputFile, false);
-		}
-	}
-	
-	private void run(File inputFile, Boolean withWatchedLiterals) {
-		
-		Solver.solve(inputFile.getPath(), withWatchedLiterals);
-		addRunInfo(Solver.getRunInfo());
-	}
-	
-	private void addRunInfo(RunInfo other) {
+	protected void addRunInfo(RunInfo other) {
 		
 		int variablesCount = other.variablesCount;
-		RunInfo runInfo = totalRunInfo.get(variablesCount);
+		int index = (other.withWatchedLiterals)? 1 : 0;
+		RunInfo runInfo = totalRunInfo[index].get(variablesCount);
 		if (runInfo==null)
-			totalRunInfo.put(variablesCount, other);
+			totalRunInfo[index].put(variablesCount, other);
 		else
 			runInfo.sum(other);
 	}
 	
-	private void print() {
+	protected void print(String outputFileName) {
 		
-		File outputFile = new File(outputFilePath.toString());
+		File outputFile = new File(outputFileName);
 		try {
 			FileWriter output = new FileWriter(outputFile);
-			for (RunInfo runInfo:totalRunInfo.values()) {
-				runInfo.setAverageValues();
-				// ...
-			}
+			printTotalRunInfo(output, 0);
+			printTotalRunInfo(output, 1);
 			output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+	}
+	
+	private void printTotalRunInfo(FileWriter output, int index) throws IOException {
+		
+		printHeader(output, index);
+		StringBuilder info = new StringBuilder();
+		Set<Integer> keys = totalRunInfo[index].keySet();
+		Iterator<Integer> orderedKeys = keys.stream().sorted().iterator();
+		while (orderedKeys.hasNext()) {
+			Integer key = orderedKeys.next();
+			RunInfo runInfo = totalRunInfo[index].get(key);
+			runInfo.setAverageValues();
+			append(info, runInfo.variablesCount);
+			append(info, runInfo.clausesCount);
+			append(info, runInfo.timeElapsed);
+			append(info, runInfo.decisionCount);
+			append(info, runInfo.unitPropagationSteps);
+			appendSeparator(info, 1);
+		}
+		appendSeparator(info, 3);
+		output.write(info.toString());
+	}
+	
+	private void printHeader(FileWriter output, int index) throws IOException {
+		
+		StringBuilder header = new StringBuilder();
+		
+		append(header, AVG_VALUES+ALGS[index]);
+		appendSeparator(header, 2);
+		append(header, VARIABLES);
+		append(header, CLAUSES);
+		append(header, TIME);
+		append(header, DECISIONS);
+		append(header, UP_STEPS);
+		appendSeparator(header, 1);
+		
+		output.write(header.toString());
+	}
+	
+	private void append(StringBuilder line, String word) {		
+		line.append(String.format("%-20s", word));
+	}
+	
+	private void append(StringBuilder line, long number) {		
+		line.append(String.format("%-20s", number));
+	}
+	
+	private void appendSeparator(StringBuilder line, int count) {
+		
+		for (int i=0;i<count;i++)
+			line.append(System.lineSeparator());
 	}
 }

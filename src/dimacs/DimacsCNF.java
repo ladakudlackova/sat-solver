@@ -16,7 +16,7 @@ public class DimacsCNF {
 
 	public static final String COMMENT = "c ";
 	public static final String HEADER = "p cnf ";
-	private static final String NNF_VARIABLES = "Original NNF variables:\n";
+	private static final String NNF_VARIABLES = "Original NNF variables:";
 	private static final String ROOT_VARIABLE = "Root variable: ";
 	private static final String EQ = "~";
 	private static final String NL = System.lineSeparator();
@@ -81,6 +81,7 @@ public class DimacsCNF {
 		sb.append(NL);
 		sb.append(COMMENT);
 		sb.append(NNF_VARIABLES);
+		sb.append(System.lineSeparator());
 		appendNNFVars(sb, nnfVars);
 	}
 

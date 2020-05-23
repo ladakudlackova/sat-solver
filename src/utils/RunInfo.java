@@ -2,6 +2,7 @@ package utils;
 
 public class RunInfo {
 
+	protected final boolean withWatchedLiterals;
 	protected final int variablesCount;
 	protected final int clausesCount;
 	protected int decisionCount;
@@ -10,9 +11,10 @@ public class RunInfo {
 	
 	protected int runsCount=1;
 	
-	public RunInfo(int variablesCount, int clausesCount, 
+	public RunInfo(boolean withWatchedLiterals, int variablesCount, int clausesCount, 
 			int decisionCount, int unitPropagationSteps, long timeElapsed) {
 		
+		this.withWatchedLiterals = withWatchedLiterals;
 		this.variablesCount = variablesCount;
 		this.clausesCount = clausesCount;
 		this.decisionCount = decisionCount;
@@ -40,6 +42,7 @@ public class RunInfo {
 		
 		System.out.println(timeElapsed + " ms");
 		System.out.println("Number of decisions: " + decisionCount);
-		System.out.println("Number of unit propagation steps: " + unitPropagationSteps + "\n");
+		System.out.println("Number of unit propagation steps: " + unitPropagationSteps);
+		System.out.println();
 	}
 }

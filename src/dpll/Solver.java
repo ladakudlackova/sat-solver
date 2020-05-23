@@ -22,19 +22,19 @@ public class Solver {
 		solve(args[0], false);
 	}
 
-	public static Boolean[] solve(String inputFileName, boolean watchedLiterals) {
+	public static Boolean[] solve(String inputFileName, boolean withWatchedLiterals) {
 
 		long start = System.currentTimeMillis();
-		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName, watchedLiterals);
+		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName, withWatchedLiterals);
 		if (dimacsCNF != null) {
 			Clauses clauses = dimacsCNF.getClauses();
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
 			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
-			long timeElapsed = finish - start;
 			runInfo=new RunInfo(
-					dimacsCNF.getVariables().length, dimacsCNF.getClausesCount(),
-					dpll.getDecisionCount(), dpll.getUnitPropagationSteps(), timeElapsed);
+					withWatchedLiterals,
+					dimacsCNF.getVariables().length-1, dimacsCNF.getClausesCount(),
+					dpll.getDecisionCount(), dpll.getUnitPropagationSteps(), finish - start);
 			printResult(assignment, dimacsCNF);
 			return assignment;
 		}
@@ -63,6 +63,7 @@ public class Solver {
 				printNnfVars(assignment, nnfVars);
 		}
 		runInfo.print();
+		
 	}
 
 	private static void printAssignment(Boolean[] assignment) {
