@@ -12,6 +12,7 @@ public class Runner {
 	private Path outputFilePath = Paths.get("src", "test", "data", "output", "task_3", "report.txt");
 	
 	private Report report = new Report();
+	private int inputCount;
 	
 	public static void main(String[] args) {
 		
@@ -36,6 +37,7 @@ public class Runner {
 		
 		File inputFolder = inputFolderPath.toFile();
 		for (final File inputFile : inputFolder.listFiles()) {
+			inputCount++;
 			run(inputFile, true);
 			run(inputFile, false);
 		}
@@ -48,6 +50,6 @@ public class Runner {
 	}
 	
 	private void printReport() {
-		report.print(outputFilePath.toString());
+		report.print(outputFilePath.toString(), inputCount);
 	}
 }

@@ -10,8 +10,9 @@ import java.util.Set;
 
 public class Report {
 
-	private static final String AVG_VALUES = "Average values";
-	private static final String[] ALGS 	= new String[]{" -DPLL:", " -DPLL with watched literals:"};
+	private static final String[] ALGS 		= new String[]{"DPLL:", "DPLL with watched literals:"};
+	private static final String AVG_VALUES 	= "Average values (";
+	private static final String RUNS 		= " runs):";
 	private static final String VARIABLES	= "variables:";	
 	private static final String CLAUSES 	= "clauses:";
 	private static final String TIME 		= "time [ms]:";
@@ -41,11 +42,13 @@ public class Report {
 			runInfo.sum(other);
 	}
 	
-	protected void print(String outputFileName) {
+	protected void print(String outputFileName, int inputCount) {
 		
 		File outputFile = new File(outputFileName);
 		try {
 			FileWriter output = new FileWriter(outputFile);
+			inputCount=inputCount/totalRunInfo[0].size();
+			output.write(AVG_VALUES+inputCount+RUNS+System.lineSeparator());
 			printTotalRunInfo(output, 0);
 			printTotalRunInfo(output, 1);
 			output.close();
@@ -71,15 +74,14 @@ public class Report {
 			append(info, runInfo.unitPropagationSteps);
 			appendSeparator(info, 1);
 		}
-		appendSeparator(info, 3);
 		output.write(info.toString());
 	}
 	
 	private void printHeader(FileWriter output, int index) throws IOException {
 		
 		StringBuilder header = new StringBuilder();
-		
-		append(header, AVG_VALUES+ALGS[index]);
+		appendSeparator(header, 2);
+		header.append(ALGS[index]);
 		appendSeparator(header, 2);
 		append(header, VARIABLES);
 		append(header, CLAUSES);

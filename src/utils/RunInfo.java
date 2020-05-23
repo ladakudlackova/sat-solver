@@ -5,8 +5,8 @@ public class RunInfo {
 	protected final boolean withWatchedLiterals;
 	protected final int variablesCount;
 	protected final int clausesCount;
-	protected int decisionCount;
-	protected int unitPropagationSteps;
+	protected long decisionCount;
+	protected long unitPropagationSteps;
 	protected long timeElapsed;
 	
 	protected int runsCount=1;
