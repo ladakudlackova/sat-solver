@@ -135,6 +135,10 @@ public class DimacsCNF {
 	public Clauses getClauses() {
 		return clauses;
 	}
+	
+	public int getClausesCount() {
+		return clausesCount;
+	}
 
 	public TseitinVariableToken[] getVariables() {
 		return variables;

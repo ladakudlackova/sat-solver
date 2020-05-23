@@ -8,6 +8,7 @@ import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.TseitinVariableToken;
 import tseitin_to_dimacs.Translation;
 import utils.DimacsFileUtils;
+import utils.RunInfo;
 
 public class Solver {
 
@@ -15,7 +16,7 @@ public class Solver {
 	private static final String SMT_LIB = ".sat";
 	private static final String SAT = "SAT";
 	private static final String UNSAT = "UNSAT";
-	private static long totalTimeElapsed = 0;
+	private static RunInfo runInfo;
 
 	public static void main(String[] args) {
 		solve(args[0], false);
@@ -30,8 +31,11 @@ public class Solver {
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
 			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
-			printResult(assignment, dimacsCNF, finish - start, 
-					dpll.getDecisionCount(), dpll.getUnitPropagationSteps());
+			long timeElapsed = finish - start;
+			runInfo=new RunInfo(
+					dimacsCNF.getVariables().length, dimacsCNF.getClausesCount(),
+					dpll.getDecisionCount(), dpll.getUnitPropagationSteps(), timeElapsed);
+			printResult(assignment, dimacsCNF);
 			return assignment;
 		}
 		return null;
@@ -46,9 +50,7 @@ public class Solver {
 		return null;
 	}
 
-	private static void printResult(Boolean[] assignment, DimacsCNF dimacsCNF, 
-			long timeElapsed, int decisionCount,
-			int unitPropagationSteps) {
+	private static void printResult(Boolean[] assignment, DimacsCNF dimacsCNF) {
 
 		if (assignment == null)
 			System.out.println(UNSAT);
@@ -60,12 +62,7 @@ public class Solver {
 			else
 				printNnfVars(assignment, nnfVars);
 		}
-		System.out.println(timeElapsed + " ms");
-		System.out.println("Number of decisions: " + decisionCount);
-		System.out.println("Number of unit propagation steps: " + unitPropagationSteps + "\n");
-		
-		totalTimeElapsed=totalTimeElapsed+timeElapsed;
-		//System.out.println("TOT: " + totalTimeElapsed);
+		runInfo.print();
 	}
 
 	private static void printAssignment(Boolean[] assignment) {
@@ -93,4 +90,7 @@ public class Solver {
 		System.out.println();
 	}
 
+	public static RunInfo getRunInfo() {
+		return runInfo;
+	}
 }
