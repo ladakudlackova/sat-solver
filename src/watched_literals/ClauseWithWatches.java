@@ -3,11 +3,11 @@ package watched_literals;
 import java.util.ArrayList;
 import java.util.List;
 
-import dpll.Clause;
+import clauses_base.ClauseBase;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
-public class ClauseWithWatches extends Clause{
+public class ClauseWithWatches extends ClauseBase{
 
 	private List<Assignment> literals = new ArrayList<Assignment>();
 	private WatchedLiteral[] watchedLiterals= new WatchedLiteral[2];
@@ -27,7 +27,7 @@ public class ClauseWithWatches extends Clause{
 	}  
 
 	@Override
-	protected Assignment getUnitAssignment() {
+	public Assignment getUnitAssignment() {
 
 		for (int i=0;i<watchedLiterals.length;i++) 
 			if (watchedLiterals[i].getVariableValue()==null)

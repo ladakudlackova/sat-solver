@@ -3,19 +3,19 @@ package watched_literals;
 import java.util.ArrayList;
 import java.util.List;
 
-import dpll.Clause;
-import dpll.Clauses;
+import clauses_base.ClauseBase;
+import clauses_base.ClausesBase;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
-public class ClausesWithWatches extends Clauses{
+public class ClausesWithWatches extends ClausesBase{
 
 	private List<ClauseWithWatches> clausesList = new ArrayList<ClauseWithWatches>();
 	private List<ClauseWithWatches> unitClausesList = new ArrayList<ClauseWithWatches>();
 	private WatchedLiterals variablesWatchedLiterals;
 	
 	@Override
-	protected void init(TseitinVariableToken[] variables) {
+	public void init(TseitinVariableToken[] variables) {
 		
 		variablesWatchedLiterals = new WatchedLiterals(variables.length, clausesList);
 	}
@@ -32,7 +32,7 @@ public class ClausesWithWatches extends Clauses{
 	}
 	
 	@Override
-	protected Clause getFirstUnitClause() {
+	public ClauseBase getFirstUnitClause() {
 		
 		while (!unitClausesList.isEmpty()) {
 			ClauseWithWatches firstUnit = unitClausesList.remove(0);

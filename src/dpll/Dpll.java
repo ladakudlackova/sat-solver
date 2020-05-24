@@ -2,19 +2,22 @@ package dpll;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import clauses_base.ClauseBase;
+import clauses_base.ClausesBase;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
 
 public class Dpll {
 
 	private Boolean[] assignment;
-	private Clauses clauses;
+	private ClausesBase clauses;
 	private TseitinVariableToken[] variables;
 	private boolean unsat = false;
 	private int decisionCount = 0;
 	private int unitPropagationSteps = 0;
 
-	protected Dpll(TseitinVariableToken[] variables, Clauses clauses) {
+	protected Dpll(TseitinVariableToken[] variables, ClausesBase clauses) {
 
 		this.variables = variables;
 		this.clauses = clauses;
@@ -71,7 +74,7 @@ public class Dpll {
 	private List<Integer> unitPropagation() {
 
 		List<Integer> last = new ArrayList<Integer>();
-		Clause unitClause = clauses.getFirstUnitClause();
+		ClauseBase unitClause = clauses.getFirstUnitClause();
 		while (!unsat && unitClause != null) {
 			unitPropagationSteps++;
 			Assignment unit = unitClause.getUnitAssignment();

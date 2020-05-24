@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import clauses_base.ClausesBase;
+import dpll.Clause;
 import dpll.Clauses;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.Assignment;
@@ -22,7 +24,7 @@ public class DimacsCNF {
 	private static final String NL = System.lineSeparator();
 	private static final int COMMENTS_LINE = 5;
 
-	private Clauses clauses;
+	private ClausesBase clauses;
 	private Collection<SimpleNNFVariableToken> nnfVars;
 	private TseitinVariableToken[] variables;
 	private int varsCount;
@@ -61,7 +63,7 @@ public class DimacsCNF {
 		if (watchedLiterals)
 			clauses=new ClausesWithWatches();
 		else
-			clauses=new DimacsClauses();
+			clauses=new Clauses();
 	}
 	
 	@Override
@@ -113,13 +115,13 @@ public class DimacsCNF {
 	}
 
 	private void appendDimacsClauses(StringBuilder sb) {
-		Iterator<DimacsClause> allClauses = ((DimacsClauses)clauses).getAllClauses();
+		Iterator<Clause> allClauses = ((Clauses)clauses).getAllClauses();
 		while (allClauses.hasNext()) 
-			appendDimacsClause(sb, (DimacsClause)allClauses.next());
+			appendDimacsClause(sb, (Clause)allClauses.next());
 		
 	}
 
-	private void appendDimacsClause(StringBuilder sb, DimacsClause clause) {
+	private void appendDimacsClause(StringBuilder sb, Clause clause) {
 		for (TseitinVariableToken var : clause.getPosLiterals()) {
 			sb.append(var.getIndex());
 			sb.append(" ");
@@ -133,7 +135,7 @@ public class DimacsCNF {
 		sb.append(NL);
 	}
 
-	public Clauses getClauses() {
+	public ClausesBase getClauses() {
 		return clauses;
 	}
 	

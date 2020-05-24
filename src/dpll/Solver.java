@@ -2,12 +2,12 @@ package dpll;
 
 import java.util.Collection;
 
-
+import clauses_base.ClausesBase;
 import dimacs.DimacsCNF;
+import dimacs.DimacsFileUtils;
 import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.TseitinVariableToken;
 import tseitin_to_dimacs.Translation;
-import utils.DimacsFileUtils;
 import utils.RunInfo;
 
 public class Solver {
@@ -27,7 +27,7 @@ public class Solver {
 		long start = System.currentTimeMillis();
 		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName, withWatchedLiterals);
 		if (dimacsCNF != null) {
-			Clauses clauses = dimacsCNF.getClauses();
+			ClausesBase clauses = dimacsCNF.getClauses();
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
 			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
