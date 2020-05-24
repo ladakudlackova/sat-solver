@@ -1,0 +1,17 @@
+Average values (50 runs):
+
+
+DPLL:
+
+variables:          clauses:            time [ms]:          decisions:          UP steps:           
+50                  218                 9                   294                 587                 
+100                 430                 1707                38278               77641               
+150                 645                 209646              3863979             18663872            
+
+
+DPLL with watched literals:
+
+variables:          clauses:            time [ms]:          decisions:          UP steps:           
+50                  218                 4                   294                 596                 
+100                 430                 444                 38279               77976               
+150                 645                 52407               3863979             18324024            
