@@ -68,24 +68,28 @@ public class ClauseWithWatches extends ClauseBase{
 			failed=true;
 			return watchedLit;
 		}
-	    WatchedLiteral freeLit = getFreeLiteral();
+	    WatchedLiteral freeLit = getFreeLiteral(watchedLit.getIndex(), otherWatchedLit.getIndex());
 	    if (freeLit!=null) 
 	    	watchedLit.update(freeLit);
 		return watchedLit;
 		
 	}
 	
-	private WatchedLiteral getFreeLiteral() {
+	private WatchedLiteral getFreeLiteral(int watchedIndex, int otherIndex) {
 		
-		int watchedIndex0=watchedLiterals[0].getIndex();
-		int watchedIndex1=watchedLiterals[1].getIndex();
-		for (int i=0; i<literals.size();i++) {
-			if (i==watchedIndex0||i==watchedIndex1)
-				continue;
-			Assignment a = literals.get(i);
-			Boolean value = a.getVariable().getValue();
-			if (value==null || value.equals(a.getValue())) 
-				return new WatchedLiteral(a, this, i);
+		if (literals.size()<=2)
+			return null;
+		int i=watchedIndex+1;
+		while (i!=watchedIndex) {
+			if (i==literals.size())
+				i=0;
+			if (i!=otherIndex) {
+				Assignment a = literals.get(i);
+				Boolean value = a.getVariable().getValue();
+				if (value==null || value.equals(a.getValue())) 
+					return new WatchedLiteral(a, this, i);
+			}
+			i++;
 		}
 		return null;
 	}
