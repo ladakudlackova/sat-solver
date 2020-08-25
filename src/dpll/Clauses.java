@@ -2,6 +2,7 @@ package dpll;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -99,8 +100,11 @@ public class Clauses extends ClausesBase{
 		var.setValue(null);
 	}
 
-
-	public Iterator<Clause> getAllClauses() {
+	public Collection<Clause> getAllClauses() {
+		return clausesSet;
+	}
+	
+	public Iterator<Clause> getAllClausesIterator() {
 		return clausesSet.iterator();
 	}
 

@@ -25,6 +25,12 @@ public class Clause extends ClauseBase{
 		unassignedCount = count;
 	}
 	
+	public void negateLiterals() {
+		HashSet<TseitinVariableToken> newNegLiterals=posLiterals;
+		posLiterals=negLiterals;
+		negLiterals=newNegLiterals;
+	}
+	
 	protected void setValue(TseitinVariableToken var, Boolean value) {
 		
 		if (value==null) 

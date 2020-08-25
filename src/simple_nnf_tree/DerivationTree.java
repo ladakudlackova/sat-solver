@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dimacs.DimacsCNF;
 import simple_nnf_tree.SimpleNNFOperatorToken.operators;
 import tseitin.Definition;
+import watched_literals.ClausesWithWatches;
 
 
 public class DerivationTree {
@@ -24,6 +26,12 @@ public class DerivationTree {
 		build(r);
 	}
 	
+	public DerivationTree(DimacsCNF phi, DimacsCNF psi) {
+		
+		StringBuilder nnf=new StringBuilder();
+		
+	}
+	
 	private void build(Reader r) {
 		List<Object> tokens=null;
 		try {
@@ -34,6 +42,8 @@ public class DerivationTree {
 		}		
 		processTokens(tokens);
 	}
+	
+	
 	
 	private void processTokens(List<Object> tokens){
 		List<DerivationNode> stack = new ArrayList<DerivationNode>();

@@ -14,6 +14,10 @@ public class DimacsFileUtils {
 
 	private static final String INVALID_DIMACS_FILE	= "Invalid dimacs file.";
 	
+	public static DimacsCNF processDimacsFile(String inputFileName) {
+		return processDimacsFile(inputFileName, true);
+	}
+	
 	public static DimacsCNF processDimacsFile(String inputFileName, boolean watchedLiterals) {
 		FileReader inputFReader = IOUtils.createReader(inputFileName);
 		if (inputFReader!=null) {
@@ -27,6 +31,8 @@ public class DimacsFileUtils {
 		BufferedReader dimacsReader = new BufferedReader(new StringReader(clauses));
 		return processClauses(dimacsReader);
 	}
+	
+	
 	
 	private static DimacsCNF processDimacsReader(BufferedReader clausesReader, boolean watchedLiterals) {	
 		DimacsCNF dimacsCNF = createDimacsCNF(clausesReader, watchedLiterals);
@@ -61,6 +67,7 @@ public class DimacsFileUtils {
 						break;
 				}
 		} catch (IOException e) {
+			
 		}
 		return -1;
 	}
@@ -91,4 +98,6 @@ public class DimacsFileUtils {
 			clause[i] = Integer.parseInt(vars[i]);
 		return clause;
 	}
+	
+	
 }

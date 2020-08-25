@@ -20,7 +20,7 @@ public class TseitinVariableToken extends FormulaToken {
 	
 	@Override
 	public String getToken() {
-		if (value)
+		if (value==null||value)
 			return token.toString();
 		return "-"+token.toString();
 	}	

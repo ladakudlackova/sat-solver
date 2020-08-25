@@ -25,6 +25,8 @@ public class SimpleNNFOperatorToken extends SimpleNNFToken {
 	    public static boolean equalsParenthesisToken(String token) {
 	    	return (LEFT_PAR.equalsToken(token)|RIGHT_PAR.equalsToken(token));
 	    }
+	    
+	
 	}
 	
 	public SimpleNNFOperatorToken(String operator) {

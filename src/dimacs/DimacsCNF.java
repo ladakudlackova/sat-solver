@@ -115,7 +115,7 @@ public class DimacsCNF {
 	}
 
 	private void appendDimacsClauses(StringBuilder sb) {
-		Iterator<Clause> allClauses = ((Clauses)clauses).getAllClauses();
+		Iterator<Clause> allClauses = ((Clauses)clauses).getAllClausesIterator();
 		while (allClauses.hasNext()) 
 			appendDimacsClause(sb, (Clause)allClauses.next());
 		
