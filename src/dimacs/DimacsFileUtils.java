@@ -32,7 +32,14 @@ public class DimacsFileUtils {
 		return processClauses(dimacsReader);
 	}
 	
-	
+	public static DimacsCNF createDimacsCNF(BufferedReader dimacsReader, boolean watchedLiterals) {
+
+		int varsCount =processHeader(dimacsReader);
+		List<Integer[]> clauses = null;
+		if (varsCount>-1)
+			clauses = processClauses(dimacsReader);
+		return new DimacsCNF(clauses, varsCount, watchedLiterals);
+	}
 	
 	private static DimacsCNF processDimacsReader(BufferedReader clausesReader, boolean watchedLiterals) {	
 		DimacsCNF dimacsCNF = createDimacsCNF(clausesReader, watchedLiterals);
@@ -42,15 +49,6 @@ public class DimacsFileUtils {
 		return dimacsCNF;
 	}
 	
-	
-	private static DimacsCNF createDimacsCNF(BufferedReader dimacsReader, boolean watchedLiterals) {
-
-		int varsCount =processHeader(dimacsReader);
-		List<Integer[]> clauses = null;
-		if (varsCount>-1)
-			clauses = processClauses(dimacsReader);
-		return new DimacsCNF(clauses, varsCount, watchedLiterals);
-	}
 	
 	private static int processHeader(BufferedReader dimacsReader) {
 		String line;

@@ -1,35 +1,41 @@
 package equivalence_testing;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.StringReader;
 import java.nio.file.Paths;
 
 import dimacs.DimacsCNF;
 import dimacs.DimacsFileUtils;
 import dpll.Clauses;
+import dpll.Solver;
 import simple_nnf_tree.Translation;
 
 public class EquivalenceChecker {
 
 	public static void main(String[] args) {
 		File DATA_INPUT_FOLDER = Paths.get("src", "test","data", "output", "task_1").toFile();
-		checkEquivalence(DATA_INPUT_FOLDER+"\\toy_6.cnf", DATA_INPUT_FOLDER+"\\toy_7.cnf");
+		checkEquivalence(DATA_INPUT_FOLDER+"\\nested_5.cnf", DATA_INPUT_FOLDER+"\\nested_8.cnf");
 
 	}
 	
 	public static void checkEquivalence(String inputFileName0, String inputFileName1) {
 		
-		boolean[] implications=new boolean[2];
 		DimacsCNF phi = DimacsFileUtils.processDimacsFile(inputFileName0, false);
-		DimacsCNF psi = DimacsFileUtils.processDimacsFile(inputFileName1, false);   // watched lit!!!!!!
-		String nnf=Translation.translate2PhiAndNotPsi(phi, psi);
-		System.out.println(nnf);
+		DimacsCNF psi = DimacsFileUtils.processDimacsFile(inputFileName1, false);   
+		boolean[] implications=new boolean[] {
+				checkImplication(phi, psi),
+				checkImplication(psi, phi)
+		};
+		System.out.println(implications);
 	}
 	
-	private static void checkImplication(String inputFileName0, String inputFileName1) {
+	private static boolean checkImplication(DimacsCNF phi, DimacsCNF psi) {
 		
-		boolean[] implications=new boolean[2];
-		DimacsCNF cnf0 = DimacsFileUtils.processDimacsFile(inputFileName0);
-		DimacsCNF cnf1 = DimacsFileUtils.processDimacsFile(inputFileName1);
+		String nnf=Translation.translate2PhiAndNotPsi(phi, psi);
+		DimacsCNF dimacsCNF = tseitin_to_dimacs.Translation.formula2dimacsCNF(new StringReader(nnf));
+		Boolean[] result = Solver.solve(dimacsCNF, true);
+		return result!=null;
 	}
 	
 

@@ -2,6 +2,7 @@ package simple_nnf_tree;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,9 +27,9 @@ public class DerivationTree {
 		build(r);
 	}
 	
-	public DerivationTree(DimacsCNF phi, DimacsCNF psi) {
+	public DerivationTree(String nnf) {
 		
-		StringBuilder nnf=new StringBuilder();
+		build(new StringReader(nnf));
 		
 	}
 	
@@ -40,6 +41,7 @@ public class DerivationTree {
 			validNNF = false;
 			return;
 		}		
+		
 		processTokens(tokens);
 	}
 	
@@ -75,7 +77,7 @@ public class DerivationTree {
 			current.rightChild=stack.remove(0);
 			stack.add(0,current);
 		}
-		else if (token.matches("^[A-Za-z][A-Za-z0-9]*"))
+		else if (token.matches("^[A-Za-z]*[A-Za-z0-9]*"))
 			processVariableToken(token, stack);
 		else
 			validNNF=false;

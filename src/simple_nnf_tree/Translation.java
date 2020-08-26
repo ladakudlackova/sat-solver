@@ -15,12 +15,12 @@ public class Translation {
 		Clauses clausesNotPsi=(Clauses)psi.getClauses();
 		clausesNotPsi.getAllClauses().forEach(clause->clause.negateLiterals());
 		
-		StringBuilder nnf = new StringBuilder();//appendLeftPar(operators.AND));
+		StringBuilder nnf = new StringBuilder(appendLeftPar(operators.AND));
 		List<Clause> clausesPhiList = new ArrayList<Clause>(((Clauses)phi.getClauses()).getAllClauses());
 		List<Clause> clausesNotPsiList = new ArrayList<Clause>(((Clauses)psi.getClauses()).getAllClauses());
 		
 		nnf.append(translateClauses(clausesPhiList, operators.AND, operators.OR));
-	//	nnf.append(translateClauses(clausesNotPsiList, operators.OR, operators.AND));
+		nnf.append(translateClauses(clausesNotPsiList, operators.OR, operators.AND));
 		return nnf.toString();
 	}
 	
@@ -28,11 +28,13 @@ public class Translation {
 			SimpleNNFOperatorToken.operators firstOperator, operators secondOperator) {
 
 		StringBuilder nnf = new StringBuilder();
-		//System.out.println(clauses. size());
-		if (clauses. size()>1) {
+		//System.out.println();
+		//System.out.print(clauses. size());
+		if (clauses.size()>1) {
 			nnf.append(appendLeftPar(firstOperator));
 			Clause clause = clauses.get(0);
-			clauses = clauses.subList(0, clauses.size()-1);
+			clauses = clauses.subList(1, clauses.size());
+			//System.out.println(clauses. size());
 			nnf.append(translateClause(clause,secondOperator));
 			nnf.append(translateClauses(clauses, firstOperator, secondOperator)+operators.RIGHT_PAR.value.getToken());
 		}
@@ -70,14 +72,12 @@ public class Translation {
 	
 	private static String translateLiteral(TseitinVariableToken literal,
 			boolean value) {
-		String nnf = "";
 		if (!value)
-			nnf=operators.NOT.toString();
-		nnf=nnf+literal.getToken()+" ";
-		return nnf;
+			return appendLeftPar(operators.NOT)+literal.getToken()+")";
+		return literal.getToken()+" ";
 	}
 	
 	private static String appendLeftPar(SimpleNNFOperatorToken.operators operator) {
-		return operators.LEFT_PAR.value.getToken()+operator.toString()+" ";
+		return operators.LEFT_PAR.value.getToken()+operator.value.getToken()+" ";
 	}
 }

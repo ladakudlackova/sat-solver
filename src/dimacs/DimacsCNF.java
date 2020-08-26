@@ -50,12 +50,16 @@ public class DimacsCNF {
 		initClauses(watchedLiterals);
 		tseitinVars.add(0, null);
 		variables = tseitinVars.toArray(new TseitinVariableToken[tseitinVars.size()]);
+		this.nnfVars = nnfVariables;
+		rootVar = nnfVars.size() + 1;
+		aClauses.removeIf(it->it.length==1 && it[0].getVariable().getIndex()==rootVar);
+		
 		for (Assignment[] aClause : aClauses) 
 			clauses.addClause(aClause, variables);	
-		this.nnfVars = nnfVariables;
+		
 		this.varsCount = tseitinVars.size();
 		clausesCount = aClauses.size();
-		rootVar = nnfVars.size() + 1;
+		
 	}
 
 	private void initClauses(boolean watchedLiterals) {

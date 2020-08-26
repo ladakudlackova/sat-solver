@@ -1,5 +1,9 @@
 package dpll;
 
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.Collection;
 
 import clauses_base.ClausesBase;
@@ -26,7 +30,8 @@ public class Solver {
 
 		long start = System.currentTimeMillis();
 		DimacsCNF dimacsCNF = createDimacsCNF(inputFileName, withWatchedLiterals);
-		if (dimacsCNF != null) {
+		if (dimacsCNF != null) 
+		{
 			ClausesBase clauses = dimacsCNF.getClauses();
 			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
 			Boolean[] assignment = dpll.solveClauses();
@@ -36,10 +41,17 @@ public class Solver {
 					dimacsCNF.getVariables().length-1, dimacsCNF.getClausesCount(),
 					dpll.getDecisionCount(), dpll.getUnitPropagationSteps(), finish - start);
 			printResult(assignment, dimacsCNF);
-			return assignment;
 		}
 		return null;
 	}
+	
+	public static Boolean[] solve(DimacsCNF dimacsCNF, boolean withWatchedLiterals) {
+
+		ClausesBase clauses = dimacsCNF.getClauses();
+		Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
+		return dpll.solveClauses();
+	}
+	
 
 	private static DimacsCNF createDimacsCNF(String inputFileName, boolean watchedLiterals) {
 

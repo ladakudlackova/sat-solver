@@ -1,9 +1,11 @@
 package tseitin_to_dimacs;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import dimacs.DimacsCNF;
@@ -69,6 +71,10 @@ public class Translation {
 			boolean watchedLiterals) {
 		Reader r = IOUtils.createReader(inputFileName);
 		return translate(r, bothImplications, watchedLiterals);
+	}
+	
+	public static DimacsCNF formula2dimacsCNF(StringReader nnf) {
+		return translate(nnf, true, true);
 	}
 
 	private static void translateAndPrint(boolean bothImplications, Reader r, OutputStream os) {
