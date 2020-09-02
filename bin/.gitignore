@@ -1,5 +1,11 @@
-/tseitin_to_dimacs/
+/test/
+/clauses_base/
+/dimacs/
 /dpll/
+/equivalence_testing/
 /simple_nnf_tree/
 /tseitin/
-/test/
+/tseitin_to_dimacs/
+/utils/
+/watched_literals/
+/test/input/data/*
