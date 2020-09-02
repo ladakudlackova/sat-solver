@@ -41,6 +41,16 @@ public class ClausesWithWatches extends ClausesBase{
 		}
 		return null;
 	}
+	
+	public List<Assignment> getAndRemoveUnitAssignment() {
+		
+		List<Assignment> result=new ArrayList<Assignment>();
+		for (ClauseWithWatches c:unitClausesList)
+			result.add(c.getFirstLiteral());
+		unitClausesList=new ArrayList<ClauseWithWatches>();
+		return result;
+		
+	}
 
 	@Override
 	public void updateClauses(Assignment a) {

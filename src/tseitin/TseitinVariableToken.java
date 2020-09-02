@@ -37,7 +37,7 @@ public class TseitinVariableToken extends FormulaToken {
 		return false;
 	}	
 	
-	protected static void reset() {
+	public static void reset() {
 		count=0;
 	}
 

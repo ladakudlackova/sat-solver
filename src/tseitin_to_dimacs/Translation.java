@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 import dimacs.DimacsCNF;
@@ -66,6 +67,18 @@ public class Translation {
 		FileOutputStream fos = IOUtils.createOutputFile(outputFileName);
 		translateAndPrint(bothImplications, r, fos);
 	}
+	
+	public static String formula2cnfString(String nnf) {
+		
+		Reader r = new StringReader(nnf);
+		valid = (r != null);
+		if (valid) {
+			DimacsCNF dimacsCNF = translate(r, true, false);
+			return dimacsCNF.toString();
+		}
+		return null;
+	}
+	
 
 	public static DimacsCNF formula2dimacsCNF(boolean bothImplications, String inputFileName,
 			boolean watchedLiterals) {
@@ -73,8 +86,8 @@ public class Translation {
 		return translate(r, bothImplications, watchedLiterals);
 	}
 	
-	public static DimacsCNF formula2dimacsCNF(StringReader nnf) {
-		return translate(nnf, true, true);
+	public static DimacsCNF formula2dimacsCNF(StringReader nnf, boolean watchedLiterals) {
+		return translate(nnf, true, watchedLiterals);
 	}
 
 	private static void translateAndPrint(boolean bothImplications, Reader r, OutputStream os) {

@@ -13,6 +13,7 @@ import simple_nnf_tree.SimpleNNFVariableToken;
 import tseitin.TseitinVariableToken;
 import tseitin_to_dimacs.Translation;
 import utils.RunInfo;
+import watched_literals.ClausesWithWatches;
 
 public class Solver {
 
@@ -33,7 +34,7 @@ public class Solver {
 		if (dimacsCNF != null) 
 		{
 			ClausesBase clauses = dimacsCNF.getClauses();
-			Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
+			Dpll dpll = new Dpll(dimacsCNF.getVariables(), (ClausesWithWatches)clauses);
 			Boolean[] assignment = dpll.solveClauses();
 			long finish = System.currentTimeMillis();
 			runInfo=new RunInfo(
@@ -41,6 +42,7 @@ public class Solver {
 					dimacsCNF.getVariables().length-1, dimacsCNF.getClausesCount(),
 					dpll.getDecisionCount(), dpll.getUnitPropagationSteps(), finish - start);
 			printResult(assignment, dimacsCNF);
+			return assignment;
 		}
 		return null;
 	}
@@ -48,7 +50,7 @@ public class Solver {
 	public static Boolean[] solve(DimacsCNF dimacsCNF, boolean withWatchedLiterals) {
 
 		ClausesBase clauses = dimacsCNF.getClauses();
-		Dpll dpll = new Dpll(dimacsCNF.getVariables(), clauses);
+		Dpll dpll = new Dpll((ClausesWithWatches)clauses, dimacsCNF.getVariables());
 		return dpll.solveClauses();
 	}
 	

@@ -7,6 +7,8 @@ import clauses_base.ClauseBase;
 import clauses_base.ClausesBase;
 import tseitin.Assignment;
 import tseitin.TseitinVariableToken;
+import watched_literals.ClauseWithWatches;
+import watched_literals.ClausesWithWatches;
 
 public class Dpll {
 
@@ -24,9 +26,22 @@ public class Dpll {
 		this.clauses.init(variables);
 		assignment = new Boolean[variables.length];
 	}
+	
+	protected Dpll(ClausesWithWatches clausesWithWatches, TseitinVariableToken[] variables) {
+
+		this.variables = variables;
+		this.clauses = clausesWithWatches;
+		this.clauses.init(variables);
+		assignment = new Boolean[variables.length];
+		for (Assignment unit: clausesWithWatches.getAndRemoveUnitAssignment()) {
+		
+			assignment[unit.getVariable().getIndex()]=unit.getValue();
+			clauses.setValue(unit);
+		}
+	}
 
 	protected Boolean[] solveClauses() {
-
+		
 		solve();
 		if (unsat)
 			return null;

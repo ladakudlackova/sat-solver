@@ -25,10 +25,15 @@ public class Clause extends ClauseBase{
 		unassignedCount = count;
 	}
 	
-	public void negateLiterals() {
-		HashSet<TseitinVariableToken> newNegLiterals=posLiterals;
-		posLiterals=negLiterals;
-		negLiterals=newNegLiterals;
+	public Clause(int count,
+			HashSet<TseitinVariableToken> posLiterals, HashSet<TseitinVariableToken> negLiterals) {
+		this.posLiterals=posLiterals;
+		this.negLiterals=negLiterals;
+		this.count=this.unassignedCount=count;
+	}
+	
+	public Clause negateLiterals() {
+		return new Clause(count, negLiterals,posLiterals);
 	}
 	
 	protected void setValue(TseitinVariableToken var, Boolean value) {
@@ -94,7 +99,12 @@ public class Clause extends ClauseBase{
 			unassignedVarOpt = stream.filter(var->(var.getValue()==null)).findFirst();
 			value=false;
 		}
+		try {
 		return new Assignment(unassignedVarOpt.get(),value);
+		}
+		catch (Exception e) {
+			return null;
+		}
 		
 	}
 	

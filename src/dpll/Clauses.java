@@ -19,6 +19,15 @@ public class Clauses extends ClausesBase{
 	private ArrayList<Clause>[] variableClausesEdges;
 	protected int unsatisfiedCount = 0;
 	
+	public Clauses(Clauses clauses) { //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		this.clausesSet=new HashSet<Clause>( clauses.clausesSet);
+		this.unitClausesSet=new HashSet<Clause>( clauses.unitClausesSet);
+		this.variableClausesEdges=clauses.variableClausesEdges;
+	}
+	
+	public Clauses() {
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(TseitinVariableToken[] variables) {
@@ -37,7 +46,12 @@ public class Clauses extends ClausesBase{
 	}
 	
 	public void addClause(Clause c) {
-		clausesSet.add(c);
+		
+		//if (c.getUnassignedCount()==1)
+	//		unitClausesSet.add(c);
+	//	else
+			clausesSet.add(c);
+		
 	    unsatisfiedCount++;
 	}	
 	
@@ -113,5 +127,5 @@ public class Clauses extends ClausesBase{
 		return unsatisfiedCount==0;
 	}
 	
-	
+
 }

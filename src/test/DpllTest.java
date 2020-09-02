@@ -24,12 +24,13 @@ public class DpllTest {
 	public void testSolver() {       
 		
 		//dpll
+	//	testSolverInputFiles(SAT_CNF_FOLDER.toFile(), true, false);
+	//	testSolverInputFiles(UNSAT_CNF_FOLDER.toFile(), false, false);
+		
+		//dpll with watched literals
 		testSolverInputFiles(SAT_CNF_FOLDER.toFile(), true, true);
 		testSolverInputFiles(UNSAT_CNF_FOLDER.toFile(), false, true);
 		
-		//dpll with watched literals
-		testSolverInputFiles(SAT_CNF_FOLDER.toFile(), true, false);
-		testSolverInputFiles(UNSAT_CNF_FOLDER.toFile(), false, false);
 	}
 	
 	private void testSolverInputFiles(File folder, Boolean sat, boolean watchedLiterals) {
@@ -43,6 +44,7 @@ public class DpllTest {
 						assertNotNull(assignment);
 					else
 						assertNull(assignment);
+					break;
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

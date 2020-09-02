@@ -35,6 +35,10 @@ public class ClauseWithWatches extends ClauseBase{
 		return null;
 	}
 	
+	public Assignment getFirstLiteral() {
+		return literals.get(0);
+	}
+	
 	public WatchedLiteral addWatchedLiteral(int index) {         
 		
 		if (0<=index && index<watchedLiterals.length) {
@@ -96,6 +100,7 @@ public class ClauseWithWatches extends ClauseBase{
 	
 	protected boolean isUnit() {
 		
+	
 		if (isSatisfied())
 			return false;
 		if (watchedLiterals[0].getVariableValue()==null) {
@@ -121,6 +126,8 @@ public class ClauseWithWatches extends ClauseBase{
 	
 	@Override
 	public boolean isSatisfied() {
+		
+		
 		
 		return (watchedLiterals[0].isSatisfied()||watchedLiterals[1].isSatisfied());
 	/*	for (Assignment a:literals)

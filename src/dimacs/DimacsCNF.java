@@ -40,8 +40,13 @@ public class DimacsCNF {
 		variables=new TseitinVariableToken[varsCount+1];
 		for (int index = 1; index<=varsCount; index++) 
 			variables[index]=new TseitinVariableToken(index);
-		for (Integer[] intClause : intClauses) 
-			clauses.addClause(intClause, variables);	
+		for (Integer[] intClause : intClauses) {
+			clauses.addClause(intClause, variables);
+			//for (int a:intClause)
+			//	System.out.print(a+"X");
+			//System.out.println();
+		}
+		
 	}
 
 	public DimacsCNF(Collection<Assignment[]> aClauses, Collection<SimpleNNFVariableToken> nnfVariables,
@@ -52,11 +57,13 @@ public class DimacsCNF {
 		variables = tseitinVars.toArray(new TseitinVariableToken[tseitinVars.size()]);
 		this.nnfVars = nnfVariables;
 		rootVar = nnfVars.size() + 1;
-		aClauses.removeIf(it->it.length==1 && it[0].getVariable().getIndex()==rootVar);
 		
-		for (Assignment[] aClause : aClauses) 
-			clauses.addClause(aClause, variables);	
-		
+		for (Assignment[] aClause : aClauses) {
+			clauses.addClause(aClause, variables);
+			//for (Assignment a:aClause)
+			//	System.out.print(a+" ");
+			//System.out.println();
+		}
 		this.varsCount = tseitinVars.size();
 		clausesCount = aClauses.size();
 		

@@ -1,6 +1,7 @@
 package simple_nnf_tree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import dimacs.DimacsCNF;
 import dpll.Clause;
@@ -12,15 +13,34 @@ public class Translation {
 	
 	public static String translate2PhiAndNotPsi(DimacsCNF phi, DimacsCNF psi) {  // nnf ~ (phi & !psi)
 		
-		Clauses clausesNotPsi=(Clauses)psi.getClauses();
-		clausesNotPsi.getAllClauses().forEach(clause->clause.negateLiterals());
+		
 		
 		StringBuilder nnf = new StringBuilder(appendLeftPar(operators.AND));
 		List<Clause> clausesPhiList = new ArrayList<Clause>(((Clauses)phi.getClauses()).getAllClauses());
-		List<Clause> clausesNotPsiList = new ArrayList<Clause>(((Clauses)psi.getClauses()).getAllClauses());
+		List<Clause> clausesNotPsiList = new ArrayList<Clause>();
+		for (Clause c :((Clauses)psi.getClauses()).getAllClauses()){
+			clausesNotPsiList.add(c.negateLiterals());
+		}
+	
 		
 		nnf.append(translateClauses(clausesPhiList, operators.AND, operators.OR));
 		nnf.append(translateClauses(clausesNotPsiList, operators.OR, operators.AND));
+		return nnf.toString();
+	}
+	
+public static String translate2NotPhi(DimacsCNF phi) {  // nnf ~ !phi)
+		
+		
+		
+	//	List<Clause> clausesPhiList = new ArrayList<Clause>(((Clauses)phi.getClauses()).getAllClauses());
+		List<Clause> clausesNotPhiList = new ArrayList<Clause>();
+		for (Clause c :((Clauses)phi.getClauses()).getAllClauses()){
+			clausesNotPhiList.add(c.negateLiterals());
+		}
+	
+		
+		//nnf.append(translateClauses(clausesPhiList, operators.AND, operators.OR));
+		StringBuilder nnf = new StringBuilder(translateClauses(clausesNotPhiList, operators.OR, operators.AND));
 		return nnf.toString();
 	}
 	
@@ -63,7 +83,10 @@ public class Translation {
 			SimpleNNFOperatorToken.operators operator) {
 
 		StringBuilder nnf = new StringBuilder();//appendLeftPar(operator));
+		if (clause.getPosLiterals().size()==1 && clause.getNegLiterals().size()>0)
+			nnf.append(operator.value.getToken()+" ");
 		nnf.append(translateLiterals(new ArrayList<TseitinVariableToken>(clause.getPosLiterals()), true, operator));
+		
 		nnf.append(translateLiterals(new ArrayList<TseitinVariableToken>(clause.getNegLiterals()), false, operator));
 		return nnf.toString();
 	}
