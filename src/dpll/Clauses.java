@@ -114,8 +114,8 @@ public class Clauses extends ClausesBase{
 		var.setValue(null);
 	}
 
-	public Collection<Clause> getAllClauses() {
-		return clausesSet;
+	public List<Clause> getAllClauses() {
+		return new ArrayList<Clause>(clausesSet);
 	}
 	
 	public Iterator<Clause> getAllClausesIterator() {
